@@ -10,6 +10,5 @@ namespace FinApi.Interfaces
     {
         Task<Tuple<string, string>> GenerateTokensAsync(Guid userId);
         Task<ValidateRefreshTokenResponse> ValidateRefreshTokenAsync(RefreshTokenRequest refreshTokenRequest);
-        Task<bool> RemoveRefreshTokenAsync(User user);
     }
 }

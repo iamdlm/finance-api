@@ -50,30 +50,13 @@ namespace FinApi.Services
             userRecord.Token = accessToken;
             userRecord.TokenExpiration = accessTokenExpiration;
             userRecord.RefreshToken = refreshTokenHashed;
-            userRecord.RefreshTokenExpiration = DateTime.Now.AddDays(30);
-            userRecord.Salt = Convert.ToBase64String(salt);
+            userRecord.RefreshTokenExpiration = DateTime.Now.AddDays(30);            
 
             await dbContext.SaveChangesAsync();
 
             Tuple<string, string> token = new Tuple<string, string>(accessToken, refreshToken);
 
             return token;
-        }
-
-        public async Task<bool> RemoveRefreshTokenAsync(User user)
-        {
-            User userRecord = await dbContext.Users.FirstOrDefaultAsync(e => e.Id == user.Id);
-
-            if (userRecord == null)
-            {
-                return false;
-            }
-
-            userRecord.RefreshToken = string.Empty;
-            userRecord.RefreshTokenExpiration = DateTime.Now.AddDays(-1);
-            userRecord.Salt = string.Empty;
-
-            return true;
         }
 
         public async Task<ValidateRefreshTokenResponse> ValidateRefreshTokenAsync(RefreshTokenRequest refreshTokenRequest)
@@ -89,7 +72,7 @@ namespace FinApi.Services
                 return response;
             }
 
-            string refreshTokenToValidateHash = PasswordHelper.HashUsingPbkdf2(refreshTokenRequest.RefreshToken, Convert.FromBase64String(userRecord.Salt));
+            string refreshTokenToValidateHash = PasswordHelper.HashUsingPbkdf2(refreshTokenRequest.RefreshToken, Convert.FromBase64String(appSettings.TokenSecret));
 
             if (userRecord.RefreshToken != refreshTokenToValidateHash)
             {
