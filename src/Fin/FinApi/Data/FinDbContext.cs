@@ -15,6 +15,8 @@ namespace FinApi
         public FinDbContext(DbContextOptions<FinDbContext> options) : base(options) { }
 
         public DbSet<User> Users { get; set; }
+        public DbSet<Portfolio> Portfolios { get; set; }
+        public DbSet<Trade> Trades { get; set; }
 
         public override int SaveChanges()
         {

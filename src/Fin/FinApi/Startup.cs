@@ -10,7 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
-using System;
+using System.Text;
 
 namespace FinApi
 {
@@ -41,12 +41,12 @@ namespace FinApi
             {
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
                     ValidateIssuerSigningKey = true,
                     ValidIssuer = appSettings.TokenIssuer,
                     ValidAudience = appSettings.TokenAudience,
-                    IssuerSigningKey = new SymmetricSecurityKey(Convert.FromBase64String(appSettings.TokenSecret))
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(appSettings.TokenSecret))
                 };
 
             });
@@ -76,6 +76,8 @@ namespace FinApi
 
             app.UseRouting();
 
+            app.UseAuthentication();
+
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
@@ -88,6 +90,7 @@ namespace FinApi
         {
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IPortfolioService, PortfolioService>();
         }
     }
 }

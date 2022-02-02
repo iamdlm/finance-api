@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace FinApi.Entities
 {
@@ -17,5 +15,6 @@ namespace FinApi.Entities
         public string RefreshToken { get; set; }
         public DateTime TokenExpiration { get; set; }
         public DateTime RefreshTokenExpiration { get; set; }
+        public ICollection<Portfolio> Portfolios { get; set; }
     }
 }

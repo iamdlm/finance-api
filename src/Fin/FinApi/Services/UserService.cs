@@ -58,7 +58,7 @@ namespace FinApi.Services
 
         public async Task<SignupResponse> SignupAsync(SignupRequest signupRequest)
         {
-            User existingUser = await dbContext.Users.SingleOrDefaultAsync(user => user.Email == signupRequest.Email);
+            User existingUser = await dbContext.Users.FirstOrDefaultAsync(user => user.Email == signupRequest.Email);
 
             if (existingUser != null)
             {
@@ -107,7 +107,9 @@ namespace FinApi.Services
                 return new SignupResponse 
                 { 
                     StatusCode = HttpStatusCode.OK, 
-                    Email = user.Email
+                    Email = user.Email,
+                    Username = user.Username,
+                    Name = user.Name
                 };
             }
 

@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using FinApi.Interfaces;
+using FinApi.Requests;
+using FinApi.Responses;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Net;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace FinApi.Controllers
@@ -13,12 +15,15 @@ namespace FinApi.Controllers
     [Route("portfolios")]
     public class PortfolioController : ControllerBase
     {
-        public PortfolioController()
-        {        
+        private readonly IPortfolioService portfolioService;
+
+        public PortfolioController(IPortfolioService _portfolioService)
+        {
+            portfolioService = _portfolioService;
         }
 
         [HttpGet]
-        public IActionResult GetAll(Guid id)
+        public IActionResult GetAll()
         {
             return this.Ok();
         }
@@ -30,9 +35,27 @@ namespace FinApi.Controllers
         }
 
         [HttpPost]
-        public IActionResult Add()
+        public async Task<IActionResult> Add([FromForm] PortfolioRequest portfolioRequest)
         {
-            return this.Ok();
+            if (portfolioRequest == null || string.IsNullOrEmpty(portfolioRequest.Name))
+            {
+                return BadRequest(new AddPortfolioResponse
+                {
+                    StatusCode = HttpStatusCode.BadRequest,
+                    Message = "Missing portfolio details."
+                });
+            }
+
+            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            AddPortfolioResponse portfolioResponse = await portfolioService.AddAsync(new Guid(userId), portfolioRequest);
+
+            if (portfolioResponse.StatusCode != HttpStatusCode.OK)
+            {
+                return UnprocessableEntity(portfolioResponse);
+            }
+
+            return Ok(portfolioResponse);
         }
 
         [HttpDelete("{id}")]

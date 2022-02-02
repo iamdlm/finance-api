@@ -47,7 +47,7 @@ namespace FinApi.Controllers
                 return UnprocessableEntity(signupResponse);
             }
 
-            return Ok(signupResponse.Email);
+            return Ok(signupResponse);
         }
 
         [HttpPost("login")]
@@ -78,7 +78,7 @@ namespace FinApi.Controllers
             {
                 return BadRequest(new TokenResponse
                 {
-                    Message = "Missing refresh token details"
+                    Message = "Missing refresh token details."
                 });
             }
 
