@@ -2,14 +2,13 @@
 using FinApi.Requests;
 using FinApi.Responses;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
 using FinApi.Helpers;
 using FinApi.Entities;
+using System.Security.Claims;
 
 namespace FinApi.Controllers
 {
@@ -40,7 +39,7 @@ namespace FinApi.Controllers
                 }
             }
 
-            User existingUser = await this.userService.GetUserByEmail(signupRequest.Email);
+            User existingUser = await this.userService.GetUserByEmailAsync(signupRequest.Email);
 
             if (existingUser != null)
             {
@@ -101,6 +100,49 @@ namespace FinApi.Controllers
             }
 
             return Ok(tokenResponse);
+        }
+
+        [HttpPost("refresh")]
+        public async Task<IActionResult> RefreshToken(RefreshTokenRequest refreshTokenRequest)
+        {
+            if (refreshTokenRequest == null || string.IsNullOrEmpty(refreshTokenRequest.RefreshToken))
+            {
+                return BadRequest(new
+                {
+                    Message = "Missing refresh token details."
+                });
+            }
+
+            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return BadRequest(new
+                {
+                    Message = "Invalid request."
+                });
+            }
+
+            TokenResponse tokenResponse = await userService.RefreshTokenAsync(
+                new RefreshTokenDto
+                {
+                    UserId = new Guid(userId),
+                    RefreshToken = refreshTokenRequest.RefreshToken
+                });
+
+            if (tokenResponse == null)
+            {
+                return BadRequest(new
+                {
+                    Message = "Invalid refresh token."
+                });
+            }
+
+            return Ok(new
+            {
+                AccessToken = tokenResponse.AccessToken,
+                Refreshtoken = tokenResponse.RefreshToken
+            });
         }
     }
 }

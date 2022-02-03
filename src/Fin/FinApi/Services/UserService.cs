@@ -9,6 +9,7 @@ using System.Linq;
 using FinApi.Entities;
 using System.Net;
 using FinApi.Repositories;
+using System.Collections.Generic;
 
 namespace FinApi.Services
 {
@@ -87,12 +88,12 @@ namespace FinApi.Services
             return await unitOfWork.UserRepository.GetByIdAsync(userId);
         }
 
-        public async Task<User> GetUserByEmail(string email)
+        public async Task<User> GetUserByEmailAsync(string email)
         {
             return await unitOfWork.UserRepository.GetByEmailAsync(email);
         }
 
-        public async Task<TokenResponse> RefreshToken(RefreshTokenDto refreshTokenDto)
+        public async Task<TokenResponse> RefreshTokenAsync(RefreshTokenDto refreshTokenDto)
         {
             User user = await unitOfWork.UserRepository.GetByIdAsync(refreshTokenDto.UserId);
 
@@ -110,6 +111,17 @@ namespace FinApi.Services
                 AccessToken = tokensDto.Token,
                 RefreshToken = tokensDto.RefreshToken
             };
+        }
+
+        public async Task<IEnumerable<UserResponse>> GetAllAsync()
+        {
+            IEnumerable<User> users = await unitOfWork.UserRepository.GetAllAsync();
+
+            return users.Select(u => new UserResponse()
+            {
+                Name = u.Name,
+                Username = u.Username
+            });
         }
     }
 }
