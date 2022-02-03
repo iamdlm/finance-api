@@ -2,7 +2,7 @@
 
 namespace FinApi.Responses
 {
-    public class AddPortfolioResponse : BaseResponse
+    public class AddPortfolioResponse
     {
         public Guid Id { get; set; }
     }

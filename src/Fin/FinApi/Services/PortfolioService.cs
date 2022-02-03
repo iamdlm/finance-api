@@ -1,5 +1,5 @@
 ﻿using FinApi.Entities;
-using FinApi.Interfaces;
+using FinApi.Services;
 using FinApi.Requests;
 using FinApi.Responses;
 using Microsoft.EntityFrameworkCore;
@@ -8,21 +8,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using FinApi.Repositories;
 
 namespace FinApi.Services
 {
     public class PortfolioService : IPortfolioService
     {
-        private readonly FinDbContext dbContext;
+        private readonly IUnitOfWork unitOfWork;
 
-        public PortfolioService(FinDbContext _DbContext)
+        public PortfolioService(IUnitOfWork unitOfWork)
         {
-            dbContext = _DbContext;
+            this.unitOfWork = unitOfWork;
         }
 
         public async Task<AddPortfolioResponse> AddAsync(Guid userId, PortfolioRequest loginRequest)
         {
-            User user = await dbContext.Users.FirstOrDefaultAsync(m => m.Id == userId);
+            User user = await unitOfWork.UserRepository.GetByIdAsync(userId);
 
             Portfolio portfolio = new Portfolio()
             {
@@ -30,34 +31,62 @@ namespace FinApi.Services
                 User = user
             };
 
-            await dbContext.Portfolios.AddAsync(portfolio);
+            unitOfWork.PortfolioRepository.Add(portfolio);
 
-            int saveResponse = await dbContext.SaveChangesAsync();
+            bool saveResponse = await unitOfWork.CompleteAsync();
 
-            if (saveResponse >= 0)
+            if (!saveResponse)
             {
-                return new AddPortfolioResponse
-                {
-                    StatusCode = HttpStatusCode.OK,
-                    Id = portfolio.Id
-                };
+                return null;
             }
 
             return new AddPortfolioResponse
             {
-                StatusCode = HttpStatusCode.BadRequest,
-                Message = "Unable to create the portfolio."
+                Id = portfolio.Id
             };
         }
 
-        public async Task DeleteAsync(Guid portfolioId)
+        public async Task<bool> DeleteAsync(Guid userId, Guid portfolioId)
         {
-            throw new NotImplementedException();
+            Portfolio portfolio = await unitOfWork.PortfolioRepository.GetByIdAsync(portfolioId, t => t.Trades, u => u.User);
+
+            if (portfolio == null || portfolio.User.Id != userId)
+            {
+                return false;
+            }
+
+            unitOfWork.PortfolioRepository.Delete(portfolio);
+
+            return await unitOfWork.CompleteAsync();
         }
 
-        public async Task<PortfolioResponse> GetAsync(Guid portfolioId)
+        public async Task<PortfolioResponse> GetAsync(Guid userId, Guid portfolioId)
         {
-            throw new NotImplementedException();
+            Portfolio portfolio = await unitOfWork.PortfolioRepository.GetByIdAsync(portfolioId, t => t.Trades, u => u.User);
+
+            if (portfolio == null || portfolio.User.Id != userId)
+            {
+                return null;
+            }
+
+            return new PortfolioResponse()
+            {
+                Id = portfolio.Id,
+                Name = portfolio.Name,
+                Trades = portfolio.Trades
+            };
+        }
+
+        public async Task<IEnumerable<PortfolioResponse>> GetAllFromUserAsync(Guid userId)
+        {
+            IEnumerable<Portfolio> portfolios = await unitOfWork.PortfolioRepository.GetAllAsync(m => m.User.Id == userId, null, t => t.Trades, u => u.User);
+
+            return portfolios.Select(s => new PortfolioResponse()
+            {
+                Id = s.Id,
+                Name = s.Name,
+                Trades = s.Trades
+            });
         }
     }
 }

@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace FinApi.Responses
 {
-    public class TradeResponse : BaseResponse
+    public class TradeResponse
     {
         public Guid Id { get; set; }
         [JsonPropertyName("user_executor")]

@@ -4,7 +4,6 @@ namespace FinApi.Entities
 {
     public class Trade : BaseEntity
     {
-        public Guid Id { get; set; }
         public string UserExecutor { get; set; }
         public string Date { get; set; }
         public int NumberOfShares { get; set; }

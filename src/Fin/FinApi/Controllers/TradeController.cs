@@ -20,24 +20,24 @@ namespace FinApi.Controllers
         [HttpGet]
         public IActionResult GetAll([FromRoute] Guid portfolioId)
         {
-            return this.Ok();
+            return Ok();
         }
 
         [HttpGet("{tradeId}")]
         public IActionResult Get([FromRoute] Guid portfolioId, Guid tradeId)
-        {            return this.Ok();
+        {            return Ok();
         }
 
         [HttpPost]
         public IActionResult Add([FromRoute] Guid portfolioId)
         {
-            return this.Ok();
+            return Ok();
         }
 
         [HttpDelete("{tradeId}")]
         public IActionResult Delete([FromRoute] Guid portfolioId, Guid tradeId)
         {
-            return this.Ok();
+            return Ok();
         }
     }
 }

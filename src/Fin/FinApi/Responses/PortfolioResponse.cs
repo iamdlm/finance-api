@@ -1,11 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using FinApi.Entities;
+using System;
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
 namespace FinApi.Responses
 {
-    public class PortfolioResponse : BaseResponse
+    public class PortfolioResponse
     {
+        public Guid Id { get; set; }
         public string Name { get; set; }
-        public ICollection<TradeResponse> Trades { get; set; }
+        public ICollection<Trade> Trades { get; set; }
     }
 }

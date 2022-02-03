@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using FinApi.Helpers;
-using FinApi.Interfaces;
+using FinApi.Services;
 using FinApi.Requests;
 using FinApi.Responses;
 using System;
@@ -8,85 +8,64 @@ using System.Threading.Tasks;
 using System.Linq;
 using FinApi.Entities;
 using System.Net;
+using FinApi.Repositories;
 
 namespace FinApi.Services
 {
     public class UserService : IUserService
     {
-        private readonly FinDbContext dbContext;
-        private readonly IAuthService tokenService;
+        private readonly IUnitOfWork unitOfWork;
+        private readonly ITokenService tokenService;
 
-        public UserService(FinDbContext _dbContext, IAuthService tokenService)
+        public UserService(IUnitOfWork unitOfWork, ITokenService tokenService)
         {
-            this.dbContext = _dbContext;
+            this.unitOfWork = unitOfWork;
             this.tokenService = tokenService;
         }
 
         public async Task<TokenResponse> LoginAsync(LoginRequest loginRequest)
         {
-            User user = dbContext.Users.SingleOrDefault(user => user.Email == loginRequest.Email);
+            User user = await unitOfWork.UserRepository.GetByEmailAsync(loginRequest.Email);
 
             if (user == null)
             {
-                return new TokenResponse
-                {
-                    StatusCode = HttpStatusCode.NotFound,
-                    Message = "Email not found"
-                };
+                return null;
             }
 
             string passwordHash = PasswordHelper.HashUsingPbkdf2(loginRequest.Password, Convert.FromBase64String(user.Salt));
 
             if (user.Password != passwordHash)
             {
+                return null;
+            }
+
+            TokensDto tokens = await tokenService.GenerateTokensAsync(user.Id);
+
+            user.Token = tokens.Token;
+            user.TokenExpiration = tokens.TokenExpiration;
+            user.RefreshToken = tokens.RefreshToken;
+            user.RefreshTokenExpiration = tokens.RefreshTokenExpiration;
+
+            unitOfWork.UserRepository.Update(user);
+
+            bool result = await unitOfWork.CompleteAsync();
+
+            if (result)
+            {
                 return new TokenResponse
                 {
-                    StatusCode = HttpStatusCode.BadRequest,
-                    Message = "Invalid Password"
+                    AccessToken = tokens.Token,
+                    RefreshToken = tokens.RefreshToken
                 };
             }
 
-            Tuple<string, string> token = await tokenService.GenerateTokensAsync(user.Id);
-
-            return new TokenResponse
-            {
-                StatusCode = HttpStatusCode.OK,
-                AccessToken = token.Item1,
-                RefreshToken = token.Item2
-            };
+            return null;
         }
 
-        public async Task<SignupResponse> SignupAsync(SignupRequest signupRequest)
+        public async Task<bool> SignupAsync(SignupRequest signupRequest)
         {
-            User existingUser = await dbContext.Users.FirstOrDefaultAsync(user => user.Email == signupRequest.Email);
-
-            if (existingUser != null)
-            {
-                return new SignupResponse
-                {
-                    StatusCode = HttpStatusCode.BadRequest,
-                    Message = "The email address is already being used."
-                };
-            }
-
-            if (signupRequest.Password != signupRequest.ConfirmPassword) {
-                return new SignupResponse
-                {
-                    StatusCode = HttpStatusCode.BadRequest,
-                    Message = "Password and confirm password do not match."
-                };
-            }
-
-            if (PasswordHelper.IsValid(signupRequest.Password))
-            {
-                return new SignupResponse
-                {
-                    StatusCode = HttpStatusCode.BadRequest,
-                    Message = "Password is weak."
-                };
-            }
-
             byte[] salt = PasswordHelper.GetSecureSalt();
+            
             string passwordHash = PasswordHelper.HashUsingPbkdf2(signupRequest.Password, salt);
 
             User user = new User
@@ -98,25 +77,38 @@ namespace FinApi.Services
                 Username = signupRequest.Username
             };
 
-            await dbContext.Users.AddAsync(user);
+            unitOfWork.UserRepository.Add(user);
 
-            int saveResponse = await dbContext.SaveChangesAsync();
+            return await unitOfWork.CompleteAsync();
+        }
 
-            if (saveResponse >= 0)
+        public async Task<User> GetUserByIdAsync(Guid userId)
+        {
+            return await unitOfWork.UserRepository.GetByIdAsync(userId);
+        }
+
+        public async Task<User> GetUserByEmail(string email)
+        {
+            return await unitOfWork.UserRepository.GetByEmailAsync(email);
+        }
+
+        public async Task<TokenResponse> RefreshToken(RefreshTokenDto refreshTokenDto)
+        {
+            User user = await unitOfWork.UserRepository.GetByIdAsync(refreshTokenDto.UserId);
+
+            bool result = tokenService.ValidateRefreshToken(user);
+
+            if (!result)
             {
-                return new SignupResponse 
-                { 
-                    StatusCode = HttpStatusCode.OK, 
-                    Email = user.Email,
-                    Username = user.Username,
-                    Name = user.Name
-                };
+                return null;
             }
 
-            return new SignupResponse
+            TokensDto tokensDto = await tokenService.GenerateTokensAsync(refreshTokenDto.UserId);
+
+            return new TokenResponse()
             {
-                StatusCode = HttpStatusCode.BadRequest,
-                Message = "Unable to save the user"
+                AccessToken = tokensDto.Token,
+                RefreshToken = tokensDto.RefreshToken
             };
         }
     }

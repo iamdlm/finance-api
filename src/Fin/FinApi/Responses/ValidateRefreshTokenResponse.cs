@@ -2,9 +2,8 @@
 
 namespace FinApi.Responses
 {
-    public class ValidateRefreshTokenResponse : BaseResponse
+    public class ValidateRefreshTokenResponse
     {
         public Guid UserId { get; set; }
-
     }
 }
