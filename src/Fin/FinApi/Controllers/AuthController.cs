@@ -1,13 +1,14 @@
-﻿using FinApi.Interfaces;
+﻿using FinApi.Services;
 using FinApi.Requests;
 using FinApi.Responses;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
+using FinApi.Helpers;
+using FinApi.Entities;
+using System.Security.Claims;
 
 namespace FinApi.Controllers
 {
@@ -16,12 +17,10 @@ namespace FinApi.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IUserService userService;
-        private readonly IAuthService tokenService;
 
-        public AuthController(IUserService userService, IAuthService tokenService)
+        public AuthController(IUserService userService)
         {
             this.userService = userService;
-            this.tokenService = tokenService;
         }
 
         [HttpPost("signup")]
@@ -33,21 +32,50 @@ namespace FinApi.Controllers
 
                 if (errors.Any())
                 {
-                    return BadRequest(new TokenResponse
+                    return BadRequest(new
                     {
                         Message = $"{string.Join(" ", errors)}"
                     });
                 }
             }
 
-            SignupResponse signupResponse = await userService.SignupAsync(signupRequest);
+            User existingUser = await this.userService.GetUserByEmailAsync(signupRequest.Email);
 
-            if (signupResponse.StatusCode != HttpStatusCode.OK)
+            if (existingUser != null)
             {
-                return UnprocessableEntity(signupResponse);
+                return BadRequest(new
+                {
+                    Message = "The email address is already being used."
+                });
             }
 
-            return Ok(signupResponse.Email);
+            if (signupRequest.Password != signupRequest.ConfirmPassword)
+            {
+                return BadRequest(new
+                {
+                    Message = "Password and confirm password do not match."
+                });
+            }
+
+            if (PasswordHelper.IsValid(signupRequest.Password))
+            {
+                return BadRequest(new
+                {
+                    Message = "Password is weak."
+                });
+            }
+
+            bool signupResult = await userService.SignupAsync(signupRequest);
+
+            if (!signupResult)
+            {
+                return BadRequest(new
+                {
+                    Message = "An error has occurred. Please try again."
+                });
+            }
+
+            return Ok();
         }
 
         [HttpPost("login")]
@@ -55,43 +83,66 @@ namespace FinApi.Controllers
         {
             if (loginRequest == null || string.IsNullOrEmpty(loginRequest.Email) || string.IsNullOrEmpty(loginRequest.Password))
             {
-                return BadRequest("Missing login details.");
-            }
-
-            TokenResponse loginResponse = await userService.LoginAsync(loginRequest);
-
-            if (loginResponse.StatusCode != HttpStatusCode.OK)
-            {
-                return Unauthorized(new
+                return BadRequest(new
                 {
-                    loginResponse.Message
+                    Message = "Missing login details."
                 });
             }
 
-            return Ok(loginResponse);
+            TokenResponse tokenResponse = await userService.LoginAsync(loginRequest);
+
+            if (tokenResponse == null)
+            {
+                return BadRequest(new
+                {
+                    Message = "Invalid login details."
+                });
+            }
+
+            return Ok(tokenResponse);
         }
 
         [HttpPost("refresh")]
         public async Task<IActionResult> RefreshToken(RefreshTokenRequest refreshTokenRequest)
         {
-            if (refreshTokenRequest == null || string.IsNullOrEmpty(refreshTokenRequest.RefreshToken) || refreshTokenRequest.UserId == Guid.Empty)
+            if (refreshTokenRequest == null || string.IsNullOrEmpty(refreshTokenRequest.RefreshToken))
             {
-                return BadRequest(new TokenResponse
+                return BadRequest(new
                 {
-                    Message = "Missing refresh token details"
+                    Message = "Missing refresh token details."
                 });
             }
 
-            ValidateRefreshTokenResponse validateRefreshTokenResponse = await tokenService.ValidateRefreshTokenAsync(refreshTokenRequest);
+            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            if (validateRefreshTokenResponse.StatusCode != HttpStatusCode.OK)
+            if (string.IsNullOrEmpty(userId))
             {
-                return UnprocessableEntity(validateRefreshTokenResponse);
+                return BadRequest(new
+                {
+                    Message = "Invalid request."
+                });
             }
 
-            Tuple<string, string> tokenResponse = await tokenService.GenerateTokensAsync(validateRefreshTokenResponse.UserId);
+            TokenResponse tokenResponse = await userService.RefreshTokenAsync(
+                new RefreshTokenDto
+                {
+                    UserId = new Guid(userId),
+                    RefreshToken = refreshTokenRequest.RefreshToken
+                });
 
-            return Ok(new { AccessToken = tokenResponse.Item1, Refreshtoken = tokenResponse.Item2 });
+            if (tokenResponse == null)
+            {
+                return BadRequest(new
+                {
+                    Message = "Invalid refresh token."
+                });
+            }
+
+            return Ok(new
+            {
+                AccessToken = tokenResponse.AccessToken,
+                Refreshtoken = tokenResponse.RefreshToken
+            });
         }
     }
 }

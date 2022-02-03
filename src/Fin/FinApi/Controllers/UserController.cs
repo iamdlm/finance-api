@@ -1,8 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using System;
+﻿using FinApi.Responses;
+using FinApi.Services;
+using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace FinApi.Controllers
@@ -11,14 +10,19 @@ namespace FinApi.Controllers
     [Route("users")]
     public class UserController : ControllerBase
     {
-        public UserController()
-        {        
+        private readonly IUserService userService;
+
+        public UserController(IUserService userService)
+        {
+            this.userService = userService;
         }
 
         [HttpGet]
-        public IActionResult Get()
+        public async Task<IActionResult> GetAll()
         {
-            return this.Ok();
+            IEnumerable<UserResponse> users = await userService.GetAllAsync();
+
+            return Ok(users);
         }
     }
 }

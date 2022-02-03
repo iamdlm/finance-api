@@ -1,10 +1,13 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using FinApi.Services;
+using FinApi.Requests;
+using FinApi.Responses;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Net;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace FinApi.Controllers
 {
@@ -13,38 +16,123 @@ namespace FinApi.Controllers
     [Route("portfolios")]
     public class PortfolioController : ControllerBase
     {
-        public PortfolioController()
-        {        
+        private readonly IPortfolioService portfolioService;
+
+        public PortfolioController(IPortfolioService portfolioService)
+        {
+            this.portfolioService = portfolioService;
         }
 
         [HttpGet]
-        public IActionResult GetAll(Guid id)
+        public async Task<IActionResult> GetAll()
         {
-            return this.Ok();
+            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return BadRequest(new
+                {
+                    Message = "Invalid request."
+                });
+            }
+
+            IEnumerable<PortfolioResponse> portfolios = await portfolioService.GetAllFromUserAsync(new Guid(userId));
+
+            return Ok(portfolios);
         }
 
         [HttpGet("{id}")]
-        public IActionResult Get(Guid id)
+        public async Task<IActionResult> Get(Guid id)
         {
-            return this.Ok();
+            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return BadRequest(new
+                {
+                    Message = "Invalid request."
+                });
+            }
+
+            PortfolioResponse portfolio = await portfolioService.GetAsync(new Guid(userId), id);
+
+            if (portfolio == null)
+            {
+                return Forbid("Portfolio doesn't exist or you don't have access.");
+            }
+
+            return Ok(portfolio);
         }
 
         [HttpPost]
-        public IActionResult Add()
+        public async Task<IActionResult> Add([FromForm] PortfolioRequest portfolioRequest)
         {
-            return this.Ok();
+            if (portfolioRequest == null || string.IsNullOrEmpty(portfolioRequest.Name))
+            {
+                return BadRequest(new
+                {
+                    Message = "Missing portfolio details."
+                });
+            }
+
+            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return BadRequest(new
+                {
+                    Message = "Invalid request."
+                });
+            }
+
+            AddPortfolioResponse portfolioResponse = await portfolioService.AddAsync(new Guid(userId), portfolioRequest);
+
+            if (portfolioResponse == null)
+            {
+                return BadRequest(new 
+                {
+                    Message = "An error has occurred. Please try again."
+                });
+            }
+
+            return Ok(portfolioResponse);
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(Guid id)
+        public async Task<IActionResult> Delete(Guid id)
         {
-            return this.Ok();
+            if (id == Guid.Empty)
+            {
+                return BadRequest(new
+                {
+                    Message = "Invalid portfolio Id."
+                });
+            }
+
+            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return BadRequest(new
+                {
+                    Message = "Invalid request."
+                });
+            }
+
+            bool result = await portfolioService.DeleteAsync(new Guid(userId), id);
+
+            if (!result)
+            {
+                return Forbid("Portfolio doesn't exist or you don't have access.");
+            }
+
+            return Ok();
         }
 
         [HttpGet("{id}/balance")]
         public IActionResult Balance(Guid id)
         {
-            return this.Ok();
+            return Ok();
         }
     }
 }

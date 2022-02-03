@@ -2,10 +2,9 @@
 
 namespace FinApi.Responses
 {
-    public class TokenResponse: BaseResponse
+    public class TokenResponse
     {
         public string AccessToken { get; set; }
         public string RefreshToken { get; set; }
-       
     }
 }
