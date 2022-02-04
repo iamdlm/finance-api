@@ -1,4 +1,4 @@
-﻿namespace FinApi.Responses
+﻿namespace FinApi.Entities
 {
     public class UserResponse
     {

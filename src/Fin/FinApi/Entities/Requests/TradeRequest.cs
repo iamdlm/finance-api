@@ -1,24 +1,34 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
-namespace FinApi.Responses
+namespace FinApi.Entities
 {
-    public class TradeResponse
+    public class TradeRequest
     {
-        public Guid Id { get; set; }
-        [JsonPropertyName("user_executor")]
-        public string UserExecutor { get; set; }
-        public Guid Portfolio { get; set; }
+        [Required]
         public string Date { get; set; }
+                
+        [Required]
         [JsonPropertyName("number_of_shares")]
         public int NumberOfShares { get; set; }
-        public float Price { get; set; }
+        
+        [Required]
+        public decimal Price { get; set; }
+        
+        [Required]
         public string Currency { get; set; }
+                
+        [Required]
         [JsonPropertyName("market_value")]
-        public float MarketValue { get; set; }
+        public decimal MarketValue { get; set; }
+        
+        [Required]
         public string Action { get; set; }
+        
         public string Notes { get; set; }
+        
+        [Required]
         public string Asset { get; set; }
     }
 }

@@ -1,13 +1,11 @@
 ﻿using FinApi.Services;
-using FinApi.Requests;
-using FinApi.Responses;
+using FinApi.Entities;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FinApi.Helpers;
-using FinApi.Entities;
 using System.Security.Claims;
 
 namespace FinApi.Controllers
@@ -31,49 +29,39 @@ namespace FinApi.Controllers
                 List<string> errors = ModelState.Values.SelectMany(x => x.Errors.Select(c => c.ErrorMessage)).ToList();
 
                 if (errors.Any())
-                {
                     return BadRequest(new
                     {
                         Message = $"{string.Join(" ", errors)}"
                     });
-                }
             }
 
             User existingUser = await this.userService.GetUserByEmailAsync(signupRequest.Email);
 
             if (existingUser != null)
-            {
                 return BadRequest(new
                 {
                     Message = "The email address is already being used."
                 });
-            }
 
             if (signupRequest.Password != signupRequest.ConfirmPassword)
-            {
                 return BadRequest(new
                 {
                     Message = "Password and confirm password do not match."
                 });
-            }
 
             if (PasswordHelper.IsValid(signupRequest.Password))
-            {
                 return BadRequest(new
                 {
                     Message = "Password is weak."
                 });
-            }
 
             bool signupResult = await userService.SignupAsync(signupRequest);
 
             if (!signupResult)
-            {
                 return BadRequest(new
                 {
                     Message = "An error has occurred. Please try again."
                 });
-            }
 
             return Ok();
         }
@@ -81,23 +69,24 @@ namespace FinApi.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginRequest loginRequest)
         {
-            if (loginRequest == null || string.IsNullOrEmpty(loginRequest.Email) || string.IsNullOrEmpty(loginRequest.Password))
+            if (!ModelState.IsValid)
             {
-                return BadRequest(new
-                {
-                    Message = "Missing login details."
-                });
+                List<string> errors = ModelState.Values.SelectMany(x => x.Errors.Select(c => c.ErrorMessage)).ToList();
+
+                if (errors.Any())
+                    return BadRequest(new
+                    {
+                        Message = $"{string.Join(" ", errors)}"
+                    });
             }
 
             TokenResponse tokenResponse = await userService.LoginAsync(loginRequest);
 
             if (tokenResponse == null)
-            {
                 return BadRequest(new
                 {
                     Message = "Invalid login details."
                 });
-            }
 
             return Ok(tokenResponse);
         }
@@ -105,38 +94,29 @@ namespace FinApi.Controllers
         [HttpPost("refresh")]
         public async Task<IActionResult> RefreshToken(RefreshTokenRequest refreshTokenRequest)
         {
-            if (refreshTokenRequest == null || string.IsNullOrEmpty(refreshTokenRequest.RefreshToken))
+            if (!ModelState.IsValid)
             {
-                return BadRequest(new
-                {
-                    Message = "Missing refresh token details."
-                });
-            }
+                List<string> errors = ModelState.Values.SelectMany(x => x.Errors.Select(c => c.ErrorMessage)).ToList();
 
-            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-            if (string.IsNullOrEmpty(userId))
-            {
-                return BadRequest(new
-                {
-                    Message = "Invalid request."
-                });
+                if (errors.Any())
+                    return BadRequest(new
+                    {
+                        Message = $"{string.Join(" ", errors)}"
+                    });
             }
 
             TokenResponse tokenResponse = await userService.RefreshTokenAsync(
                 new RefreshTokenDto
                 {
-                    UserId = new Guid(userId),
+                    UserId = new Guid(User.FindFirstValue(ClaimTypes.NameIdentifier)),
                     RefreshToken = refreshTokenRequest.RefreshToken
                 });
 
             if (tokenResponse == null)
-            {
                 return BadRequest(new
                 {
                     Message = "Invalid refresh token."
                 });
-            }
 
             return Ok(new
             {

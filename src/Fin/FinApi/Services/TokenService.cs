@@ -1,14 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
-using FinApi.Helpers;
-using FinApi.Services;
-using FinApi.Requests;
-using FinApi.Responses;
+﻿using FinApi.Helpers;
+using FinApi.Entities;
 using System;
 using System.Threading.Tasks;
-using FinApi.Entities;
 using System.Text;
 using Microsoft.Extensions.Options;
-using System.Net;
 
 namespace FinApi.Services
 {

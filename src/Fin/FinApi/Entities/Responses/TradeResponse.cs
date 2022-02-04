@@ -1,22 +1,28 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace FinApi.Entities
 {
-    public class Trade : BaseEntity
+    public class TradeResponse
     {
-        public User User { get; set; }
+        public Guid Id { get; set; }
         
-        public DateTime Date { get; set; }
+        [JsonPropertyName("user_executor")]
+        public Guid UserId { get; set; }
         
+        [JsonPropertyName("portfolio")]
+        public Guid PortfolioId { get; set; }
+        
+        public string Date { get; set; }
+        
+        [JsonPropertyName("number_of_shares")]
         public int NumberOfShares { get; set; }
         
-        [Column(TypeName = "decimal(18,2)")]
         public decimal Price { get; set; }
         
         public string Currency { get; set; }
         
-        [Column(TypeName = "decimal(18,2)")]
+        [JsonPropertyName("market_value")]
         public decimal MarketValue { get; set; }
         
         public string Action { get; set; }
@@ -24,7 +30,5 @@ namespace FinApi.Entities
         public string Notes { get; set; }
         
         public string Asset { get; set; }
-        
-        public Portfolio Portfolio { get; set; }
     }
 }

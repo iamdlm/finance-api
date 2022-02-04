@@ -1,4 +1,4 @@
-﻿using FinApi.Responses;
+﻿using FinApi.Entities;
 using FinApi.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
