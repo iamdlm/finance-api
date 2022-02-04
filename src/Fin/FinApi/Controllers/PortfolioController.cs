@@ -23,7 +23,7 @@ namespace FinApi.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAllAsync()
         {
             IEnumerable<PortfolioResponse> portfolios = await portfolioService.GetAllByUserIdAsync(new Guid(User.FindFirstValue(ClaimTypes.NameIdentifier)));
 
@@ -31,7 +31,7 @@ namespace FinApi.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> Get(Guid id)
+        public async Task<IActionResult> GetAsync(Guid id)
         {
             PortfolioResponse portfolio = await portfolioService.GetAsync(new Guid(User.FindFirstValue(ClaimTypes.NameIdentifier)), id);
 
@@ -42,7 +42,7 @@ namespace FinApi.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Add(PortfolioRequest portfolioRequest)
+        public async Task<IActionResult> AddAsync(PortfolioRequest portfolioRequest)
         {
             if (!ModelState.IsValid)
             {
@@ -67,7 +67,7 @@ namespace FinApi.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(Guid id)
+        public async Task<IActionResult> DeleteAsync(Guid id)
         {
             bool result = await portfolioService.DeleteAsync(new Guid(User.FindFirstValue(ClaimTypes.NameIdentifier)), id);
 
@@ -78,7 +78,7 @@ namespace FinApi.Controllers
         }
 
         [HttpGet("{id}/balance")]
-        public IActionResult Balance(Guid id)
+        public IActionResult BalanceAsync(Guid id)
         {
             return Ok();
         }

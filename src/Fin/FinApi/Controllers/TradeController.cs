@@ -23,78 +23,68 @@ namespace FinApi.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll([FromRoute] Guid portfolioId)
+        public async Task<IActionResult> GetAllAsync([FromRoute] Guid portfolioId)
         {
             IEnumerable<TradeResponse> trades = await tradeService.GetAllByPortfolioIdAsync(new Guid(User.FindFirstValue(ClaimTypes.NameIdentifier)), portfolioId);
 
-            if(trades == null)
-            {
+            if (trades == null)
                 return NotFound(new
                 {
                     Message = "The porfolio doesn't exist or access is denied."
                 });
-            }
 
             return Ok(trades);
         }
 
         [HttpGet("{tradeId}")]
-        public async Task<IActionResult> Get([FromRoute] Guid portfolioId, Guid tradeId)
+        public async Task<IActionResult> GetAsync([FromRoute] Guid portfolioId, Guid tradeId)
         {
             TradeResponse trade = await tradeService.GetAsync(new Guid(User.FindFirstValue(ClaimTypes.NameIdentifier)), portfolioId, tradeId);
 
             if (trade == null)
-            {
                 return NotFound(new
                 {
                     Message = "The entity doesn't exist or access is denied."
                 });
-            }
 
             return Ok(trade);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Add([FromRoute] Guid portfolioId, TradeRequest tradeRequest)
+        public async Task<IActionResult> AddAsync([FromRoute] Guid portfolioId, TradeRequest tradeRequest)
         {
             if (!ModelState.IsValid)
             {
                 List<string> errors = ModelState.Values.SelectMany(x => x.Errors.Select(c => c.ErrorMessage)).ToList();
 
                 if (errors.Any())
-                {
                     return BadRequest(new
                     {
                         Message = $"{string.Join(" ", errors)}"
                     });
-                }
             }
 
             Guid? tradeId = await tradeService.AddAsync(new Guid(User.FindFirstValue(ClaimTypes.NameIdentifier)), portfolioId, tradeRequest);
 
             if (tradeId == null)
-            {
                 return BadRequest(new
                 {
                     Message = "An error has occurred. Please try again."
                 });
-            }
 
             return Ok(tradeId);
         }
 
         [HttpDelete("{tradeId}")]
-        public async Task<IActionResult> Delete([FromRoute] Guid portfolioId, Guid tradeId)
+        public async Task<IActionResult> DeleteAsync([FromRoute] Guid portfolioId, Guid tradeId)
         {
             bool result = await tradeService.DeleteAsync(new Guid(User.FindFirstValue(ClaimTypes.NameIdentifier)), portfolioId, tradeId);
 
             if (!result)
-            {
                 return NotFound(new
                 {
                     Message = "The entity doesn't exist or access is denied."
                 });
-            }
 
             return NoContent();
         }

@@ -85,6 +85,8 @@ namespace FinApi.Services
             return portfolio.Trades.Select(t => new TradeResponse()
             {
                 Id = t.Id,
+                Created = t.Created,
+                Modified = t.Modified,
                 Date = t.Date.ToString("yyyy-MM-dd"),
                 Action = t.Action,
                 Asset = t.Asset,
@@ -108,6 +110,8 @@ namespace FinApi.Services
             return new TradeResponse()
             {
                 Id = trade.Id,
+                Created = trade.Created,
+                Modified = trade.Modified,
                 Date = trade.Date.ToString("yyyy-MM-dd"),
                 Action = trade.Action,
                 Asset = trade.Asset,

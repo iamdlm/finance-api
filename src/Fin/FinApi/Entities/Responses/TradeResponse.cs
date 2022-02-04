@@ -6,7 +6,11 @@ namespace FinApi.Entities
     public class TradeResponse
     {
         public Guid Id { get; set; }
-        
+
+        public DateTime Created { get; set; }
+
+        public DateTime Modified { get; set; }
+
         [JsonPropertyName("user_executor")]
         public Guid UserId { get; set; }
         

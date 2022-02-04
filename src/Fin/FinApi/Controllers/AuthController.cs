@@ -22,7 +22,7 @@ namespace FinApi.Controllers
         }
 
         [HttpPost("signup")]
-        public async Task<IActionResult> Signup(SignupRequest signupRequest)
+        public async Task<IActionResult> SignupAsync(SignupRequest signupRequest)
         {
             if (!ModelState.IsValid)
             {
@@ -67,7 +67,7 @@ namespace FinApi.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login(LoginRequest loginRequest)
+        public async Task<IActionResult> LoginAsync(LoginRequest loginRequest)
         {
             if (!ModelState.IsValid)
             {
@@ -92,7 +92,7 @@ namespace FinApi.Controllers
         }
 
         [HttpPost("refresh")]
-        public async Task<IActionResult> RefreshToken(RefreshTokenRequest refreshTokenRequest)
+        public async Task<IActionResult> RefreshTokenAsync(RefreshTokenRequest refreshTokenRequest)
         {
             if (!ModelState.IsValid)
             {

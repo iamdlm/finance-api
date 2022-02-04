@@ -10,10 +10,7 @@ namespace FinApi.Filters
     {
         private readonly FinDbContext dbContext;
 
-        public AppInitializerFilter(FinDbContext _dbContext)
-        {
-            dbContext = _dbContext;
-        }
+        public AppInitializerFilter(FinDbContext dbContext) => this.dbContext = dbContext;
 
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
@@ -21,14 +18,12 @@ namespace FinApi.Filters
 
             ClaimsIdentity claimsIdentity = (ClaimsIdentity)context.HttpContext.User.Identity;
 
-            if(claimsIdentity != null)
+            if (claimsIdentity != null)
             {
                 Claim userIdClaim = claimsIdentity.Claims.SingleOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
 
                 if (userIdClaim != null)
-                {
                     userId = new Guid(userIdClaim.Value);
-                }
             }
 
             dbContext.UserId = userId;
