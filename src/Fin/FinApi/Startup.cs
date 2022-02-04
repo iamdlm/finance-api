@@ -116,6 +116,7 @@ namespace FinApi
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IPortfolioService, PortfolioService>();
+            services.AddScoped<ITradeService, TradeService>();
         }
     }
 }

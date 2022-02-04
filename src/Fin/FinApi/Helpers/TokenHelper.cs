@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.IdentityModel.Tokens;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -13,16 +12,15 @@ namespace FinApi.Helpers
     {
         public static string GenerateAccessToken(Guid userId, string issuer, string audience, string secret, DateTime expiration)
         {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.UTF8.GetBytes(secret);
+            byte[] key = Encoding.UTF8.GetBytes(secret);
 
-            var claimsIdentity = new ClaimsIdentity(new[] {
+            ClaimsIdentity claimsIdentity = new ClaimsIdentity(new[] {
                 new Claim(ClaimTypes.NameIdentifier, userId.ToString())
             });
 
-            var signingCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature);
+            SigningCredentials signingCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature);
 
-            var tokenDescriptor = new SecurityTokenDescriptor
+            SecurityTokenDescriptor tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = claimsIdentity,
                 Issuer = issuer,
@@ -31,16 +29,19 @@ namespace FinApi.Helpers
                 SigningCredentials = signingCredentials,
 
             };
-            var securityToken = tokenHandler.CreateToken(tokenDescriptor);
+
+            JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
+
+            SecurityToken securityToken = tokenHandler.CreateToken(tokenDescriptor);
 
             return tokenHandler.WriteToken(securityToken);
         }
 
         public static async Task<string> GenerateRefreshToken()
         {
-            var secureRandomBytes = new byte[32];
+            byte[] secureRandomBytes = new byte[32];
 
-            using var randomNumberGenerator = RandomNumberGenerator.Create();
+            using RandomNumberGenerator randomNumberGenerator = RandomNumberGenerator.Create();
             await Task.Run(() => randomNumberGenerator.GetBytes(secureRandomBytes));
 
             string refreshToken = Convert.ToBase64String(secureRandomBytes);

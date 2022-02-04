@@ -10,19 +10,16 @@ namespace FinApi.Repositories
         private readonly IRepository<Portfolio> portfolioRepository;
         private readonly IRepository<Trade> tradeRepository;
 
-        public UnitOfWork(FinDbContext context) 
-        {
-            this.context = context;
-        }
-        
+        public UnitOfWork(FinDbContext context) => this.context = context;
+
         public IUserRepository UserRepository => userRepository ?? new UserRepository(context);
-        
+
         public IRepository<Portfolio> PortfolioRepository => portfolioRepository ?? new Repository<Portfolio>(context);
-        
+
         public IRepository<Trade> TradeRepository => tradeRepository ?? new Repository<Trade>(context);
 
         public async Task<bool> CompleteAsync() => await context.SaveChangesAsync() > 0;
-        
+
         public void Dispose() => context.Dispose();
     }
 }

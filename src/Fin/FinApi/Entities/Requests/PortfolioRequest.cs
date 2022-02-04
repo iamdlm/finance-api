@@ -1,7 +1,6 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace FinApi.Requests
+namespace FinApi.Entities
 {
     public class PortfolioRequest
     {

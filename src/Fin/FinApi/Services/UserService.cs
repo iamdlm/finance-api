@@ -1,13 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
-using FinApi.Helpers;
-using FinApi.Services;
-using FinApi.Requests;
-using FinApi.Responses;
+﻿using FinApi.Helpers;
+using FinApi.Entities;
 using System;
 using System.Threading.Tasks;
 using System.Linq;
-using FinApi.Entities;
-using System.Net;
 using FinApi.Repositories;
 using System.Collections.Generic;
 

@@ -1,9 +1,10 @@
-﻿using System;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace FinApi.Requests
+namespace FinApi.Entities
 {
     public class RefreshTokenRequest
     {
+        [Required]
         public string RefreshToken { get; set; }
     }
 }

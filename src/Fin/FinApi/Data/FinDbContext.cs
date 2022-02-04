@@ -1,5 +1,6 @@
 ﻿using FinApi.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,7 +33,7 @@ namespace FinApi
 
         private void AddTimestamps()
         {
-            var entities = ChangeTracker.Entries()
+            IEnumerable<EntityEntry> entities = ChangeTracker.Entries()
                 .Where(x => (x.Entity is BaseEntity) && (x.State == EntityState.Added || x.State == EntityState.Modified));
 
             DateTime now = DateTime.Now;

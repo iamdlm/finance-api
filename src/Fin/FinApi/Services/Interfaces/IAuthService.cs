@@ -1,6 +1,4 @@
 ﻿using FinApi.Entities;
-using FinApi.Requests;
-using FinApi.Responses;
 using System;
 using System.Threading.Tasks;
 

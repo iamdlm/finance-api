@@ -1,4 +1,4 @@
-﻿using FinApi.Responses;
+﻿using FinApi.Entities;
 using FinApi.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -18,7 +18,7 @@ namespace FinApi.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAllAsync()
         {
             IEnumerable<UserResponse> users = await userService.GetAllAsync();
 
