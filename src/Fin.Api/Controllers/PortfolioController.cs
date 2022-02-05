@@ -60,7 +60,7 @@ namespace FinApi.Controllers
             if (portfolioId == null)
                 return BadRequest(new
                 {
-                    Message = "An error has occurred. Please try again."
+                    Message = "An error has occurred."
                 });
 
             return Ok(portfolioId);

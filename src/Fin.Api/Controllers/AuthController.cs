@@ -1,5 +1,4 @@
-﻿using Fin.Domain.Entities;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +6,6 @@ using System.Threading.Tasks;
 using System.Security.Claims;
 using Fin.Application.Interfaces;
 using Fin.Application.ViewModels;
-using Fin.Application.Helpers;
 using Fin.Application.DTOs;
 using Fin.Api.Helpers;
 using Microsoft.Extensions.Options;
@@ -41,35 +39,15 @@ namespace FinApi.Controllers
                     });
             }
 
-            UserResponse existingUser = await this.userService.GetUserByEmailAsync(signupRequest.Email);
+            UserResponse signupResult = await userService.SignupAsync(signupRequest);
 
-            if (existingUser != null)
+            if (signupResult == null)
                 return BadRequest(new
                 {
-                    Message = "The email address is already being used."
+                    Message = signupResult.Message
                 });
 
-            if (signupRequest.Password != signupRequest.ConfirmPassword)
-                return BadRequest(new
-                {
-                    Message = "Password and confirm password do not match."
-                });
-
-            if (PasswordHelper.IsValid(signupRequest.Password))
-                return BadRequest(new
-                {
-                    Message = "Password is weak."
-                });
-
-            bool signupResult = await userService.SignupAsync(signupRequest);
-
-            if (!signupResult)
-                return BadRequest(new
-                {
-                    Message = "An error has occurred. Please try again."
-                });
-
-            return Ok();
+            return Ok(signupResult);
         }
 
         [HttpPost("login")]
