@@ -3,13 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31515.178
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fin.Api", "Fin.Api\Fin.Api.csproj", "{960C9357-CD3E-4778-963B-43D60EAADA97}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fin.Api", "src\Fin.Api\Fin.Api.csproj", "{960C9357-CD3E-4778-963B-43D60EAADA97}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fin.Infrastructure", "Fin.Infrastructure\Fin.Infrastructure.csproj", "{5A3D68B4-D050-4C0A-B11C-EBBF61A2CFD4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fin.Infrastructure", "src\Fin.Infrastructure\Fin.Infrastructure.csproj", "{5A3D68B4-D050-4C0A-B11C-EBBF61A2CFD4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fin.Domain", "Fin.Domain\Fin.Domain.csproj", "{2E4671AA-FCA7-4CB8-B70A-0464F17AE295}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fin.Domain", "src\Fin.Domain\Fin.Domain.csproj", "{2E4671AA-FCA7-4CB8-B70A-0464F17AE295}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fin.Application", "Fin.Application\Fin.Application.csproj", "{222BE2F5-9D3E-4723-B499-23A04AC99118}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fin.Application", "src\Fin.Application\Fin.Application.csproj", "{222BE2F5-9D3E-4723-B499-23A04AC99118}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{28F9BE8E-F488-4EED-96CB-04B1B73AAB30}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{587DBB02-ABD1-4064-8A24-936DAE532963}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -36,6 +40,12 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{960C9357-CD3E-4778-963B-43D60EAADA97} = {28F9BE8E-F488-4EED-96CB-04B1B73AAB30}
+		{5A3D68B4-D050-4C0A-B11C-EBBF61A2CFD4} = {28F9BE8E-F488-4EED-96CB-04B1B73AAB30}
+		{2E4671AA-FCA7-4CB8-B70A-0464F17AE295} = {28F9BE8E-F488-4EED-96CB-04B1B73AAB30}
+		{222BE2F5-9D3E-4723-B499-23A04AC99118} = {28F9BE8E-F488-4EED-96CB-04B1B73AAB30}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {637E15CB-EE06-46D5-9B7A-0A11A033A788}
