@@ -8,7 +8,6 @@ This is a solution example for the "Backend challenge" with ASP.NET Core followi
 - Swagger
 
 ## Getting started
-### Database Configuration
 1. Update the `DefaultConnection` connection string within `appsettings.json` and make sure it points to a valid SQL Server instance.  
 When you run the application the database will be automatically created (if necessary) and the latest migrations will be applied.
 2. Navigate to src/Fin.Api and run `dotnet run` to launch the backend (ASP.NET Core Web API)
