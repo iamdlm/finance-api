@@ -69,7 +69,7 @@ namespace FinApi.Controllers
             if (tradeId == null)
                 return BadRequest(new
                 {
-                    Message = "An error has occurred. Please try again."
+                    Message = "An error has occurred."
                 });
 
             return Ok(tradeId);

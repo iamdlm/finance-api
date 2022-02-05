@@ -49,16 +49,36 @@ namespace Fin.Application.Services
                 return null;
 
             return new TokenResponse
-                {
-                    AccessToken = tokens.Token,
-                    RefreshToken = tokens.RefreshToken
-                };
+            {
+                AccessToken = tokens.Token,
+                RefreshToken = tokens.RefreshToken
+            };
         }
 
-        public async Task<bool> SignupAsync(SignupRequest signupRequest)
+        public async Task<UserResponse> SignupAsync(SignupRequest signupRequest)
         {
+            UserResponse existingUser = await this.GetUserByEmailAsync(signupRequest.Email);
+
+            if (existingUser != null)
+                return new UserResponse()
+                {
+                    Message = "The email address is already being used."
+                };
+
+            if (signupRequest.Password != signupRequest.ConfirmPassword)
+                return new UserResponse()
+                {
+                    Message = "Password and confirm password do not match."
+                };
+
+            if (PasswordHelper.IsValid(signupRequest.Password))
+                return new UserResponse()
+                {
+                    Message = "Password is weak."
+                };
+
             byte[] salt = PasswordHelper.GetSecureSalt();
-            
+
             string passwordHash = PasswordHelper.HashUsingPbkdf2(signupRequest.Password, salt);
 
             User user = new User
@@ -72,7 +92,19 @@ namespace Fin.Application.Services
 
             unitOfWork.UserRepository.Add(user);
 
-            return await unitOfWork.CompleteAsync();
+            bool result = await unitOfWork.CompleteAsync();
+
+            if (!result)
+                return new UserResponse()
+                {
+                    Message = "An error has occurred."
+                };
+
+            return new UserResponse() 
+            {
+                Name = signupRequest.Name,
+                Username = signupRequest.Username
+            };
         }
 
         public async Task<UserResponse> GetUserByIdAsync(Guid userId)
