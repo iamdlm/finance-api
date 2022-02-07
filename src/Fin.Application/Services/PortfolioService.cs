@@ -45,7 +45,7 @@ namespace Fin.Application.Services
         {
             Portfolio portfolio = await unitOfWork.PortfolioRepository.GetByIdAsync(portfolioId, u => u.User);
 
-            if (portfolio == null || portfolio.User == null || portfolio.User.Id != userId)            
+            if (portfolio == null || portfolio.User == null || portfolio.User.Id != userId)
                 return false;
 
             unitOfWork.PortfolioRepository.Delete(portfolio);
@@ -76,6 +76,31 @@ namespace Fin.Application.Services
                 Id = p.Id,
                 Name = p.Name
             });
+        }
+
+        public async Task<PortfolioBalanceResponse> GetBalanceAsync(Guid userId, Guid portfolioId)
+        {
+            Portfolio portfolio = await unitOfWork.PortfolioRepository.GetByIdAsync(portfolioId, u => u.User, u => u.User, t => t.Trades);
+
+            if (portfolio == null || portfolio.User == null || portfolio.User.Id != userId)
+                return null;
+
+            decimal balance = 0;
+
+            if (portfolio.Trades.Any())
+            {
+                foreach(Trade trade in portfolio.Trades)
+                {
+
+                }
+            }
+
+            return new PortfolioBalanceResponse()
+            {
+                Id = portfolio.Id,
+                Name = portfolio.Name,
+                Balance = balance
+            };
         }
     }
 }

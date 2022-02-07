@@ -35,7 +35,7 @@ namespace Fin.Infrastructure.Migrations
                     Id = table.Column<Guid>(nullable: false),
                     Created = table.Column<DateTime>(nullable: false),
                     Modified = table.Column<DateTime>(nullable: false),
-                    UserExecutor = table.Column<string>(nullable: true),
+                    UserId = table.Column<Guid>(nullable: true),
                     Date = table.Column<string>(nullable: true),
                     NumberOfShares = table.Column<int>(nullable: false),
                     Price = table.Column<float>(nullable: false),
@@ -55,6 +55,12 @@ namespace Fin.Infrastructure.Migrations
                         principalTable: "Portfolios",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Trades_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
@@ -66,6 +72,11 @@ namespace Fin.Infrastructure.Migrations
                 name: "IX_Trades_PortfolioId",
                 table: "Trades",
                 column: "PortfolioId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Trades_UserId",
+                table: "Trades",
+                column: "UserId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
