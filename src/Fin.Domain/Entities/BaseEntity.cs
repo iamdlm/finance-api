@@ -5,7 +5,7 @@ namespace Fin.Domain.Entities
     public abstract class BaseEntity
     {
         public Guid Id { get; set; }
-        public DateTime Created { get; set; }
-        public DateTime Modified { get; set; }
+        public DateTimeOffset Created { get; set; }
+        public DateTimeOffset Modified { get; set; }
     }
 }

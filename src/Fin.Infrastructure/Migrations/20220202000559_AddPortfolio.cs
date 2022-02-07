@@ -12,8 +12,8 @@ namespace Fin.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
-                    Created = table.Column<DateTime>(nullable: false),
-                    Modified = table.Column<DateTime>(nullable: false),
+                    Created = table.Column<DateTimeOffset>(nullable: false),
+                    Modified = table.Column<DateTimeOffset>(nullable: false),
                     Name = table.Column<string>(nullable: true),
                     UserId = table.Column<Guid>(nullable: true)
                 },
@@ -33,8 +33,8 @@ namespace Fin.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
-                    Created = table.Column<DateTime>(nullable: false),
-                    Modified = table.Column<DateTime>(nullable: false),
+                    Created = table.Column<DateTimeOffset>(nullable: false),
+                    Modified = table.Column<DateTimeOffset>(nullable: false),
                     UserId = table.Column<Guid>(nullable: true),
                     Date = table.Column<string>(nullable: true),
                     NumberOfShares = table.Column<int>(nullable: false),

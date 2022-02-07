@@ -95,8 +95,8 @@ namespace Fin.Application.Services
             return portfolio.Trades.Select(t => new TradeResponse()
             {
                 Id = t.Id,
-                Created = t.Created,
-                Modified = t.Modified,
+                Created = t.Created.ToString("yyyy-MM-ddTHH:mm:sszzz"),
+                Modified = t.Modified.ToString("yyyy-MM-ddTHH:mm:sszzz"),
                 Date = t.Date.ToString("yyyy-MM-dd"),
                 Action = t.Action.ToString().ToLowerInvariant(),
                 Asset = t.Asset,
@@ -120,8 +120,8 @@ namespace Fin.Application.Services
             return new TradeResponse()
             {
                 Id = trade.Id,
-                Created = trade.Created,
-                Modified = trade.Modified,
+                Created = trade.Created.ToString("yyyy-MM-ddTHH:mm:sszzz"),
+                Modified = trade.Modified.ToString("yyyy-MM-ddTHH:mm:sszzz"),
                 Date = trade.Date.ToString("yyyy-MM-dd"),
                 Action = trade.Action.ToString().ToLowerInvariant(),
                 Asset = trade.Asset,

@@ -40,7 +40,7 @@ namespace Fin.Infrastructure
             IEnumerable<EntityEntry> entities = ChangeTracker.Entries()
                 .Where(x => (x.Entity is BaseEntity) && (x.State == EntityState.Added || x.State == EntityState.Modified));
 
-            DateTime now = DateTime.UtcNow;
+            DateTimeOffset now = DateTimeOffset.UtcNow;
 
             foreach (var entity in entities)
             {
