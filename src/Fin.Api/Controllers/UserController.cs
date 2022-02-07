@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Fin.Application.Interfaces;
 using Fin.Application.ViewModels;
 
-namespace FinApi.Controllers
+namespace Fin.Api.Controllers
 {
     [ApiController]
     [Route("users")]

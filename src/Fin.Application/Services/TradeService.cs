@@ -1,6 +1,7 @@
 ﻿using Fin.Application.Interfaces;
 using Fin.Application.ViewModels;
 using Fin.Domain.Entities;
+using Fin.Domain.Enums;
 using Fin.Domain.Repositories;
 using System;
 using System.Collections.Generic;
@@ -25,16 +26,23 @@ namespace Fin.Application.Services
             if (user == null)
                 return null;
 
-            Portfolio portfolio = await unitOfWork.PortfolioRepository.GetByIdAsync(portfolioId);
+            Portfolio portfolio = await unitOfWork.PortfolioRepository.GetByIdAsync(portfolioId, u => u.User, t => t.Trades);
 
-            if (portfolio == null)
+            if (portfolio == null || portfolio.User == null || portfolio.User.Id != userId)
+                return null;
+
+            if (portfolio.Trades.Any(t => t.Currency != tradeRequest.Currency)) 
                 return null;
 
             DateTime date;
+            TradeAction action;
 
             try
             {
                 date = DateTime.Parse(tradeRequest.Date);
+                bool conversion = Enum.TryParse(tradeRequest.Action, true, out action);
+                if (!conversion)
+                    throw new Exception();
             }
             catch (Exception)
             {
@@ -44,7 +52,7 @@ namespace Fin.Application.Services
             Trade trade = new Trade()
             {
                 Date = date,
-                Action = tradeRequest.Action,
+                Action = action,
                 Asset = tradeRequest.Asset,
                 Currency = tradeRequest.Currency,
                 MarketValue = tradeRequest.MarketValue,
@@ -90,7 +98,7 @@ namespace Fin.Application.Services
                 Created = t.Created,
                 Modified = t.Modified,
                 Date = t.Date.ToString("yyyy-MM-dd"),
-                Action = t.Action,
+                Action = t.Action.ToString().ToLowerInvariant(),
                 Asset = t.Asset,
                 Currency = t.Currency,
                 MarketValue = t.MarketValue,
@@ -115,7 +123,7 @@ namespace Fin.Application.Services
                 Created = trade.Created,
                 Modified = trade.Modified,
                 Date = trade.Date.ToString("yyyy-MM-dd"),
-                Action = trade.Action,
+                Action = trade.Action.ToString().ToLowerInvariant(),
                 Asset = trade.Asset,
                 Currency = trade.Currency,
                 MarketValue = trade.MarketValue,

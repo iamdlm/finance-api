@@ -10,7 +10,7 @@ using Fin.Application.DTOs;
 using Fin.Api.Helpers;
 using Microsoft.Extensions.Options;
 
-namespace FinApi.Controllers
+namespace Fin.Api.Controllers
 {
     [ApiController]
     [Route("auth")]

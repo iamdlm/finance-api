@@ -11,5 +11,6 @@ namespace Fin.Application.Interfaces
         Task<bool> DeleteAsync(Guid userId, Guid portfolioId);
         Task<PortfolioResponse> GetAsync(Guid userId, Guid portfolioId);
         Task<IEnumerable<PortfolioResponse>> GetAllByUserIdAsync(Guid userId);
+        Task<PortfolioBalanceResponse> GetBalanceAsync(Guid userId, Guid portfolioId);
     }
 }

@@ -14,7 +14,7 @@ namespace Fin.Application.Services
 
         public async Task<TokensDto> GenerateTokensAsync(Guid userId, TokenSettingsDto tokenSettings)
         {
-            DateTime accessTokenExpiration = DateTime.Now.AddHours(2);
+            DateTime accessTokenExpiration = DateTime.UtcNow.AddHours(2);
 
             string accessToken = TokenHelper.GenerateAccessToken(
                 userId,
@@ -34,7 +34,7 @@ namespace Fin.Application.Services
                 Token = accessToken,
                 TokenExpiration = accessTokenExpiration,
                 RefreshToken = refreshTokenHashed,
-                RefreshTokenExpiration = DateTime.Now.AddDays(30)
+                RefreshTokenExpiration = DateTime.UtcNow.AddDays(30)
             };
         }
 
@@ -47,7 +47,7 @@ namespace Fin.Application.Services
                 return false;
             }
 
-            if (user.RefreshTokenExpiration < DateTime.Now)
+            if (user.RefreshTokenExpiration < DateTime.UtcNow)
             {
                 return false;
             }

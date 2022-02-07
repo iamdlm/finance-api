@@ -5,7 +5,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
-namespace FinApi.Filters
+namespace Fin.Api.Filters
 {
     public class AppInitializerFilter : IAsyncActionFilter
     {

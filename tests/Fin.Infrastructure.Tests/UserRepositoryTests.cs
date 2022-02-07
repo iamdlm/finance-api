@@ -89,7 +89,8 @@ namespace Fin.Infrastructure.Tests
         public async Task GetAllWithExpressionAsync_Returns_Users()
         {
             // Act
-            IEnumerable<User> users = await userRepository.GetAllAsync(u => u.Email == "aaa@example.com");
+            IEnumerable<User> users =
+                await userRepository.GetAllAsync(u => u.Email == "aaa@example.com");
 
             // Assert  
             Assert.NotNull(users);
@@ -151,7 +152,7 @@ namespace Fin.Infrastructure.Tests
         public async Task Update_Returns_User()
         {
             // Act
-            User userBeforeUpdate = await userRepository.GetByIdAsync(new Guid("7ab39994-e375-450d-851d-3dc92a7e1fad"));            
+            User userBeforeUpdate = await userRepository.GetByIdAsync(new Guid("7ab39994-e375-450d-851d-3dc92a7e1fad"));
             userBeforeUpdate.Email = "updated@example.com";
             userRepository.Update(userBeforeUpdate);
             fixture.DbContext.SaveChanges();

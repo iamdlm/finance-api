@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
 
-namespace FinApi
+namespace Fin.Api
 {
     public class Program
     {

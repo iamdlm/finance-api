@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
+using Fin.Domain.Enums;
 
 namespace Fin.Domain.Entities
 {
@@ -19,7 +20,7 @@ namespace Fin.Domain.Entities
         [Column(TypeName = "decimal(18,2)")]
         public decimal MarketValue { get; set; }
         
-        public string Action { get; set; }
+        public TradeAction Action { get; set; }
         
         public string Notes { get; set; }
         

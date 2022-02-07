@@ -6,11 +6,13 @@ using System.Threading.Tasks;
 using Fin.Domain.Repositories;
 using Fin.Application.ViewModels;
 using Fin.Application.Interfaces;
+using Fin.Domain.Enums;
 
 namespace Fin.Application.Services
 {
     public class PortfolioService : IPortfolioService
     {
+        private readonly string AssetCashKey = "CASH";
         private readonly IUnitOfWork unitOfWork;
 
         public PortfolioService(IUnitOfWork unitOfWork)
@@ -43,9 +45,9 @@ namespace Fin.Application.Services
 
         public async Task<bool> DeleteAsync(Guid userId, Guid portfolioId)
         {
-            Portfolio portfolio = await unitOfWork.PortfolioRepository.GetByIdAsync(portfolioId, u => u.User);
+            Portfolio portfolio = await unitOfWork.PortfolioRepository.GetByIdAsync(portfolioId, u => u.User, t => t.Trades);
 
-            if (portfolio == null || portfolio.User == null || portfolio.User.Id != userId)            
+            if (portfolio == null || portfolio.User == null || portfolio.User.Id != userId || portfolio.Trades == null || portfolio.Trades.Any())
                 return false;
 
             unitOfWork.PortfolioRepository.Delete(portfolio);
@@ -76,6 +78,34 @@ namespace Fin.Application.Services
                 Id = p.Id,
                 Name = p.Name
             });
+        }
+
+        public async Task<PortfolioBalanceResponse> GetBalanceAsync(Guid userId, Guid portfolioId)
+        {
+            Portfolio portfolio = await unitOfWork.PortfolioRepository.GetByIdAsync(portfolioId, u => u.User, u => u.User, t => t.Trades);
+
+            if (portfolio == null || portfolio.User == null || portfolio.User.Id != userId)
+                return null;
+
+            decimal balance = 0;
+
+            if (portfolio.Trades.Any())
+            {
+                foreach (Trade trade in portfolio.Trades)
+                {
+                    if (trade.Action == TradeAction.Buy)
+                        balance += trade.MarketValue;
+                    else
+                        balance -= trade.MarketValue;
+                }
+            }
+
+            return new PortfolioBalanceResponse()
+            {
+                Id = portfolio.Id,
+                Name = portfolio.Name,
+                Balance = balance
+            };
         }
     }
 }

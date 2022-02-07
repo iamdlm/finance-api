@@ -1,4 +1,5 @@
 ﻿using Fin.Domain.Entities;
+using Fin.Domain.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,8 +9,6 @@ namespace Fin.Domain.Tests
 {
     public class MockData
     {
-
-
         public static List<User> Users
         {
             get
@@ -29,7 +28,9 @@ namespace Fin.Domain.Tests
                 return new List<Portfolio>
                 {
                     PortfolioB1,
-                    PortfolioB2
+                    PortfolioB2,
+                    PortfolioB3,
+                    PortfolioB4
                 };
             }
         }
@@ -40,7 +41,10 @@ namespace Fin.Domain.Tests
             {
                 return new List<Trade>
                 {
-                    TradePB2
+                    TradePB2,
+                    TradePB3N1,
+                    TradePB3N2,
+                    TradePB3N3
                 };
             }
         }
@@ -75,19 +79,78 @@ namespace Fin.Domain.Tests
             User = UserB
         };
 
+        public static readonly Portfolio PortfolioB3 = new Portfolio
+        {
+            Id = new Guid("ce8174d2-2522-4b7a-9538-bd1984c5cf49"),
+            Name = "PB3",
+            User = UserB
+        };
+
+        public static readonly Portfolio PortfolioB4 = new Portfolio
+        {
+            Id = new Guid("3edff360-0f04-43d7-aa4d-ba11510276c7"),
+            Name = "PB4",
+            User = UserB
+        };
+
         public static readonly Trade TradePB2 = new Trade
         {
             Id = new Guid("d201c7e5-8858-41d6-a20f-2e338cfb6164"),
             Date = new DateTime(),
-            Action = "buy",
+            Action = TradeAction.Buy,
             Asset = "BTC",
             Currency = "EUR",
-            MarketValue = 1000,
-            NumberOfShares = 10,
-            Price = 100,
+            MarketValue = 70000,
+            NumberOfShares = 2,
+            Price = 35000,
             Notes = string.Empty,
             User = UserB,
             Portfolio = PortfolioB2
+        };
+
+        public static readonly Trade TradePB3N1 = new Trade
+        {
+            Id = new Guid("d201c7e5-8858-41d6-a20f-2e338cfb0001"),
+            Date = new DateTime(),
+            Action = TradeAction.Buy,
+            Asset = "ETH",
+            Currency = "EUR",
+            MarketValue = 25000,
+            NumberOfShares = 10,
+            Price = 2500,
+            Notes = string.Empty,
+            User = UserB,
+            Portfolio = PortfolioB3
+        };
+
+        public static readonly Trade TradePB3N2 = new Trade
+        {
+            Id = new Guid("d201c7e5-8858-41d6-a20f-2e338cfb0002"),
+            Date = new DateTime(),
+            Action = TradeAction.Sell,
+            Asset = "ETH",
+            Currency = "EUR",
+            MarketValue = 17500,
+            NumberOfShares = 5,
+            Price = 3500,
+            Notes = string.Empty,
+            User = UserB,
+            Portfolio = PortfolioB3
+        };
+
+        public static readonly Trade TradePB3N3 = new Trade
+        {
+            Id = new Guid("d201c7e5-8858-41d6-a20f-2e338cfb0003"),
+            Date = new DateTime(),
+            Action = TradeAction.Buy,
+            Asset = "CASH",
+            Currency = "EUR",
+            MarketValue = 1000,
+            NumberOfShares = 1,
+            Price = 1000,
+            Notes = string.Empty,
+            User = UserB,
+            Portfolio = PortfolioB3
         };
     }
 }

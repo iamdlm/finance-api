@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Fin.Infrastructure.Migrations
 {
     [DbContext(typeof(FinDbContext))]
-    [Migration("20220202000559_AddPortfolio")]
-    partial class AddPortfolio
+    [Migration("20220207121625_TradeActionEnum")]
+    partial class TradeActionEnum
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -52,8 +52,8 @@ namespace Fin.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Action")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Action")
+                        .HasColumnType("int");
 
                     b.Property<string>("Asset")
                         .HasColumnType("nvarchar(max)");
@@ -64,11 +64,11 @@ namespace Fin.Infrastructure.Migrations
                     b.Property<string>("Currency")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Date")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
 
-                    b.Property<float>("MarketValue")
-                        .HasColumnType("real");
+                    b.Property<decimal>("MarketValue")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime>("Modified")
                         .HasColumnType("datetime2");
@@ -82,8 +82,8 @@ namespace Fin.Infrastructure.Migrations
                     b.Property<Guid?>("PortfolioId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<float>("Price")
-                        .HasColumnType("real");
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<Guid?>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -91,6 +91,8 @@ namespace Fin.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("PortfolioId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Trades");
                 });
@@ -151,6 +153,10 @@ namespace Fin.Infrastructure.Migrations
                     b.HasOne("Fin.Domain.Entities.Portfolio", "Portfolio")
                         .WithMany("Trades")
                         .HasForeignKey("PortfolioId");
+
+                    b.HasOne("Fin.Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
                 });
 #pragma warning restore 612, 618
         }
