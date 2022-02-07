@@ -12,14 +12,16 @@ namespace Fin.Infrastructure
     public class FinDbContext : DbContext
     {
         public Guid UserId { get; set; }
-                
+
+        public FinDbContext() : base() { }
+
         public FinDbContext(DbContextOptions<FinDbContext> options) : base(options) { }
 
-        public DbSet<User> Users { get; set; }
+        public virtual DbSet<User> Users { get; set; }
         
-        public DbSet<Portfolio> Portfolios { get; set; }
+        public virtual DbSet<Portfolio> Portfolios { get; set; }
         
-        public DbSet<Trade> Trades { get; set; }
+        public virtual DbSet<Trade> Trades { get; set; }
 
         public override int SaveChanges()
         {
