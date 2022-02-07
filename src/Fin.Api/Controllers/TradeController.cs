@@ -74,19 +74,5 @@ namespace Fin.Api.Controllers
 
             return Ok(tradeId);
         }
-
-        [HttpDelete("{tradeId}")]
-        public async Task<IActionResult> DeleteAsync([FromRoute] Guid portfolioId, Guid tradeId)
-        {
-            bool result = await tradeService.DeleteAsync(new Guid(User.FindFirstValue(ClaimTypes.NameIdentifier)), portfolioId, tradeId);
-
-            if (!result)
-                return NotFound(new
-                {
-                    Message = "The entity doesn't exist or access is denied."
-                });
-
-            return NoContent();
-        }
     }
 }
