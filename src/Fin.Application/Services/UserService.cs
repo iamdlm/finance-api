@@ -50,8 +50,10 @@ namespace Fin.Application.Services
 
             return new TokenResponse
             {
-                AccessToken = tokens.Token,
-                RefreshToken = tokens.RefreshToken
+                Token = tokens.Token,
+                TokenExpiration = tokens.TokenExpiration.ToString("yyyy-MM-ddTHH:mm:ssK"),
+                RefreshToken = tokens.RefreshToken,
+                RefreshTokenExpiration = tokens.RefreshTokenExpiration.ToString("yyyy-MM-ddTHH:mm:ssK")
             };
         }
 
@@ -151,8 +153,10 @@ namespace Fin.Application.Services
 
             return new TokenResponse()
             {
-                AccessToken = tokensDto.Token,
-                RefreshToken = tokensDto.RefreshToken
+                Token = tokensDto.Token,
+                TokenExpiration = tokensDto.TokenExpiration.ToString("yyyy-MM-ddTHH:mm:ssK"),
+                RefreshToken = tokensDto.RefreshToken,
+                RefreshTokenExpiration = tokensDto.RefreshTokenExpiration.ToString("yyyy-MM-ddTHH:mm:ssK")
             };
         }
 

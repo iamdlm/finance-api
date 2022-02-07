@@ -115,11 +115,7 @@ namespace Fin.Api.Controllers
                     Message = "Invalid refresh token."
                 });
 
-            return Ok(new
-            {
-                AccessToken = tokenResponse.AccessToken,
-                Refreshtoken = tokenResponse.RefreshToken
-            });
+            return Ok(tokenResponse);
         }
     }
 }

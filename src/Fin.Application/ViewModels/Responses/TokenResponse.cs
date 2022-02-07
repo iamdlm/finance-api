@@ -4,10 +4,17 @@ namespace Fin.Application.ViewModels
 {
     public class TokenResponse
     {
-        [JsonPropertyName("access_token")]
-        public string AccessToken { get; set; }
+        [JsonPropertyName("token")]
+        public string Token { get; set; }
+
+        [JsonPropertyName("token_expiration")] 
+        public string TokenExpiration { get; set; }
 
         [JsonPropertyName("refresh_token")]
         public string RefreshToken { get; set; }
+
+        [JsonPropertyName("refresh_token_expiration")]
+        public string RefreshTokenExpiration { get; set; }
+
     }
 }

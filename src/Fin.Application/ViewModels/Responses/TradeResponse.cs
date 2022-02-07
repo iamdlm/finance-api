@@ -7,9 +7,9 @@ namespace Fin.Application.ViewModels
     {
         public Guid Id { get; set; }
 
-        public DateTime Created { get; set; }
+        public string Created { get; set; }
 
-        public DateTime Modified { get; set; }
+        public string Modified { get; set; }
 
         [JsonPropertyName("user_executor")]
         public Guid UserId { get; set; }
