@@ -9,7 +9,8 @@ This is a solution example for the "Backend challenge" with ASP.NET Core followi
 
 ## Getting started
 1. Update the `DefaultConnection` connection string within `appsettings.json` and make sure it points to a valid SQL Server instance.  
-When you run the application the database will be automatically created (if necessary) and the latest migrations will be applied.
+When you run the application the database will be automatically created (if necessary) and the latest migrations will be applied.  
+Alternatively, run the command `dotnet ef database update --project src\Fin.Infrastructure --startup-project src\Fin.Api` (assuming you're at source folder) to create the database.
 2. Update information about token issuer, audience and secret within `appsettings.json`.
 3. Navigate to src/Fin.Api and run `dotnet run` to launch the backend (ASP.NET Core Web API).
 
