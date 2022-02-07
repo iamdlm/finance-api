@@ -17,5 +17,5 @@ When you run the application the database will be automatically created (if nece
 - An user has one or more portfolios, each portfolio has a list of trades, and the sum of all trades gives the portfolio position.
 - Portfolios with at least one trade cannot be deleted.
 - All trades in a portfolio must have the same currency.
-- Trades cannot be deleted.
+- Trades cannot be deleted [#13](https://github.com/iamdlm/finance-api/pull/13).
 
