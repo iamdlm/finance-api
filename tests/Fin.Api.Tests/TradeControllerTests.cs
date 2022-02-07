@@ -1,11 +1,8 @@
-using Fin.Application.Interfaces;
 using Fin.Application.Services;
 using Fin.Domain.Tests;
 using Fin.Infrastructure.Repositories;
 using Fin.Infrastructure.Tests;
-using FinApi.Controllers;
-using Moq;
-using System;
+using Fin.Api.Controllers;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -31,6 +28,7 @@ namespace Fin.Api.Tests
         {
             // Act
             var portfolio = await tradeController.GetAllAsync(MockData.PortfolioB2.Id);
+            tradeController.HttpContext.User.Identity.IsAuthenticated
 
             // Assert
             Assert.NotNull(portfolio);

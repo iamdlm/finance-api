@@ -111,5 +111,38 @@ namespace Fin.Application.Tests
             Assert.False(result);
             Assert.Equal(portfoliosBefore.ToList().Count, portfoliosAfter.ToList().Count);
         }
+
+        [Fact]
+        public async Task GetBalanceAsync_WithNoTrades_Returns_Zero()
+        {
+            // Act
+            var balance = await portfolioService.GetBalanceAsync(MockData.UserB.Id, MockData.PortfolioB4.Id);
+
+            // Assert
+            Assert.NotNull(balance);
+            Assert.Equal(0, balance.Balance);
+        }
+
+        [Fact]
+        public async Task GetBalanceAsync_WithOneTrade_Returns_Positive()
+        {
+            // Act
+            var balance = await portfolioService.GetBalanceAsync(MockData.UserB.Id, MockData.PortfolioB2.Id);
+
+            // Assert
+            Assert.NotNull(balance);
+            Assert.Equal(70000, balance.Balance);
+        }
+
+        [Fact]
+        public async Task GetBalanceAsync_WithMultipleTrades_Returns_Positive()
+        {
+            // Act
+            var balance = await portfolioService.GetBalanceAsync(MockData.UserB.Id, MockData.PortfolioB3.Id);
+
+            // Assert
+            Assert.NotNull(balance);
+            Assert.Equal(8500, balance.Balance);
+        }
     }
 }

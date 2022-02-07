@@ -20,8 +20,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\Fin.Api\Fin.Api.csproj" />
-    <ProjectReference Include="..\tests\Fin.Infrastructure.Tests\Fin.Infrastructure.Tests.csproj" />
+    <ProjectReference Include="..\..\src\Fin.Api\Fin.Api.csproj" />
+    <ProjectReference Include="..\..\src\Fin.Application\Fin.Application.csproj" />
+    <ProjectReference Include="..\..\src\Fin.Infrastructure\Fin.Infrastructure.csproj" />
+    <ProjectReference Include="..\Fin.Infrastructure.Tests\Fin.Infrastructure.Tests.csproj" />
   </ItemGroup>
 
 </Project>

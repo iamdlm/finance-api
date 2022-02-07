@@ -13,7 +13,7 @@ using System.Text;
 using Fin.Infrastructure;
 using Fin.Api.Helpers;
 
-namespace FinApi
+namespace Fin.Api
 {
     public class Startup
     {

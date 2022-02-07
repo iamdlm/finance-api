@@ -26,9 +26,12 @@ namespace Fin.Application.Services
             if (user == null)
                 return null;
 
-            Portfolio portfolio = await unitOfWork.PortfolioRepository.GetByIdAsync(portfolioId, u => u.User);
+            Portfolio portfolio = await unitOfWork.PortfolioRepository.GetByIdAsync(portfolioId, u => u.User, t => t.Trades);
 
             if (portfolio == null || portfolio.User == null || portfolio.User.Id != userId)
+                return null;
+
+            if (portfolio.Trades.Any(t => t.Currency != tradeRequest.Currency)) 
                 return null;
 
             DateTime date;
