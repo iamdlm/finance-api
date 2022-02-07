@@ -19,9 +19,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fin.Application.Tests", "te
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fin.Infrastructure.Tests", "tests\Fin.Infrastructure.Tests\Fin.Infrastructure.Tests.csproj", "{64BDCA3A-917C-48E8-96B4-4B3D494E70D2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fin.Domain.Tests", "Fin.Domain.Tests\Fin.Domain.Tests.csproj", "{FE15C190-DFDB-45FF-8995-CE93139E3457}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fin.Domain.Tests", "tests\Fin.Domain.Tests\Fin.Domain.Tests.csproj", "{FE15C190-DFDB-45FF-8995-CE93139E3457}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fin.Api.Tests", "Fin.Api.Tests\Fin.Api.Tests.csproj", "{BA04FFA6-F196-47A5-ABA9-BDE5959FF1BF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fin.Api.Tests", "tests\Fin.Api.Tests\Fin.Api.Tests.csproj", "{BA04FFA6-F196-47A5-ABA9-BDE5959FF1BF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
