@@ -7,24 +7,21 @@ using System.Threading.Tasks;
 
 namespace Fin.Api.Filters
 {
-    public class AppInitializerFilter : IAsyncActionFilter
+    public class ContextUserIdFilter : IAsyncActionFilter
     {
         private readonly FinDbContext dbContext;
 
-        public AppInitializerFilter(FinDbContext dbContext) => this.dbContext = dbContext;
+        public ContextUserIdFilter(FinDbContext dbContext) => this.dbContext = dbContext;
 
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
             Guid userId = Guid.Empty;
 
-            ClaimsIdentity claimsIdentity = (ClaimsIdentity)context.HttpContext.User.Identity;
+            string claimsIdentity = context.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            if (claimsIdentity != null)
+            if (string.IsNullOrEmpty(claimsIdentity))
             {
-                Claim userIdClaim = claimsIdentity.Claims.SingleOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
-
-                if (userIdClaim != null)
-                    userId = new Guid(userIdClaim.Value);
+                userId = new Guid(claimsIdentity);
             }
 
             dbContext.UserId = userId;
