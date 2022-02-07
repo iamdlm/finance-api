@@ -4,7 +4,7 @@ This is a solution example for the "Backend challenge" with ASP.NET Core followi
 ## Technologies
 - ASP.NET Core 3.1
 - Entity Framework Core 3.1
-- xUnit, InMemory & Moq
+- xUnit & InMemory
 - Swagger
 
 ## Getting started
@@ -15,4 +15,7 @@ When you run the application the database will be automatically created (if nece
 
 ## Considerations about the implementation
 - An user has one or more portfolios, each portfolio has a list of trades, and the sum of all trades gives the portfolio position.
+- Portfolios with at least one trade cannot be deleted.
+- All trades in a portfolio must have the same currency.
 - Trades cannot be deleted.
+
