@@ -4,7 +4,7 @@ This is a solution example for the "Backend challenge" with ASP.NET Core followi
 ## Technologies
 - ASP.NET Core 3.1
 - Entity Framework Core 3.1
-- NUnit, FluentAssertions & Moq
+- xUnit, InMemory & Moq
 - Swagger
 
 ## Getting started
@@ -12,3 +12,7 @@ This is a solution example for the "Backend challenge" with ASP.NET Core followi
 When you run the application the database will be automatically created (if necessary) and the latest migrations will be applied.
 2. Update information about token issuer, audience and secret within `appsettings.json`.
 3. Navigate to src/Fin.Api and run `dotnet run` to launch the backend (ASP.NET Core Web API).
+
+## Considerations about the implementation
+- An user has one or more portfolios, each portfolio has a list of trades, and the sum of all trades gives the portfolio position.
+- Trades cannot be deleted.
