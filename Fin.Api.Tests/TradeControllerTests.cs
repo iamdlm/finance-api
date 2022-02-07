@@ -30,7 +30,6 @@ namespace Fin.Api.Tests
         public async Task GetAllAsync_Returns_Trades()
         {
             // Act
-            tradeController.HttpContext.User.
             var portfolio = await tradeController.GetAllAsync(MockData.PortfolioB2.Id);
 
             // Assert
