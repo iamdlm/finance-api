@@ -12,7 +12,6 @@ namespace Fin.Application.Services
 {
     public class PortfolioService : IPortfolioService
     {
-        private readonly string AssetCashKey = "CASH";
         private readonly IUnitOfWork unitOfWork;
 
         public PortfolioService(IUnitOfWork unitOfWork)
