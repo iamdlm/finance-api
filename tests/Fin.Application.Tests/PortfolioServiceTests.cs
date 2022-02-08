@@ -28,7 +28,6 @@ namespace Fin.Application.Tests
         public async Task GetByIdAsync_Returns_Portfolio()
         {
             // Act
-            var portfolioService = new PortfolioService(unitOfWork);
             var portfolio = await portfolioService.GetAsync(MockData.UserB.Id, MockData.PortfolioB2.Id);
 
             // Assert
@@ -102,6 +101,13 @@ namespace Fin.Application.Tests
         {
             // Assert
             await Assert.ThrowsAsync<NotFoundException>(() => portfolioService.DeleteAsync(MockData.UserB.Id, new Guid()));
+        }
+
+        [Fact]
+        public async Task DeleteAsync_Throws_BadRequestException()
+        {
+            // Assert
+            await Assert.ThrowsAsync<BadRequestException>(() => portfolioService.DeleteAsync(MockData.UserB.Id, MockData.PortfolioB2.Id));
         }
 
         [Fact]

@@ -60,7 +60,7 @@ namespace Fin.Application.Services
 
         public async Task<UserResponse> SignupAsync(SignupRequest signupRequest)
         {
-            UserResponse existingUser = await this.GetUserByEmailAsync(signupRequest.Email);
+            User existingUser = await unitOfWork.UserRepository.GetByEmailAsync(signupRequest.Email);
 
             if (existingUser != null)
                 throw new BadRequestException("The email address is already being used.");
