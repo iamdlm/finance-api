@@ -8,6 +8,7 @@ using Fin.Application.ViewModels;
 using Fin.Application.DTOs;
 using Fin.Application.Interfaces;
 using Fin.Application.Helpers;
+using Fin.Domain.Exceptions;
 
 namespace Fin.Application.Services
 {
@@ -27,12 +28,12 @@ namespace Fin.Application.Services
             User user = await unitOfWork.UserRepository.GetByEmailAsync(loginRequest.Email);
 
             if (user == null)
-                return null;
+                throw new NotFoundException("Entity doesn't exist or access is denied.");
 
             string passwordHash = PasswordHelper.HashUsingPbkdf2(loginRequest.Password, Convert.FromBase64String(user.Salt));
 
             if (user.Password != passwordHash)
-                return null;
+                throw new BadRequestException("Wrong password.");
 
             TokensDto tokens = await tokenService.GenerateTokensAsync(user.Id, tokenSettings);
 
@@ -62,22 +63,13 @@ namespace Fin.Application.Services
             UserResponse existingUser = await this.GetUserByEmailAsync(signupRequest.Email);
 
             if (existingUser != null)
-                return new UserResponse()
-                {
-                    Message = "The email address is already being used."
-                };
+                throw new BadRequestException("The email address is already being used.");
 
             if (signupRequest.Password != signupRequest.ConfirmPassword)
-                return new UserResponse()
-                {
-                    Message = "Password and confirm password do not match."
-                };
+                throw new BadRequestException("Password and confirm password do not match.");
 
             if (PasswordHelper.IsValid(signupRequest.Password))
-                return new UserResponse()
-                {
-                    Message = "Password is weak."
-                };
+                throw new BadRequestException("Password is weak.");
 
             byte[] salt = PasswordHelper.GetSecureSalt();
 
@@ -97,10 +89,7 @@ namespace Fin.Application.Services
             bool result = await unitOfWork.CompleteAsync();
 
             if (!result)
-                return new UserResponse()
-                {
-                    Message = "An error has occurred."
-                };
+                return null;
 
             return new UserResponse() 
             {
@@ -114,7 +103,7 @@ namespace Fin.Application.Services
             User user = await unitOfWork.UserRepository.GetByIdAsync(userId);
 
             if (user == null)
-                return null;
+                throw new NotFoundException("Entity doesn't exist or access is denied.");
 
             return new UserResponse()
             {
@@ -128,7 +117,7 @@ namespace Fin.Application.Services
             User user = await unitOfWork.UserRepository.GetByEmailAsync(email);
 
             if (user == null)
-                return null;
+                throw new NotFoundException("Entity doesn't exist or access is denied.");
 
             return new UserResponse()
             {
@@ -142,7 +131,7 @@ namespace Fin.Application.Services
             User user = await unitOfWork.UserRepository.GetByIdAsync(refreshTokenDto.UserId);
 
             if (user == null)
-                return null;
+                throw new NotFoundException("Entity doesn't exist or access is denied.");
 
             bool result = tokenService.ValidateRefreshToken(user, tokenSettings.TokenSecret);
 

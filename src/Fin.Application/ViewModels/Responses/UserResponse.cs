@@ -2,12 +2,10 @@
 
 namespace Fin.Application.ViewModels
 {
-    public class UserResponse : BaseResponse
+    public class UserResponse
     {
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string Username { get; set; }
         
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string Name { get; set; }
     }
 }

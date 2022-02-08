@@ -7,6 +7,7 @@ using Fin.Domain.Repositories;
 using Fin.Application.ViewModels;
 using Fin.Application.Interfaces;
 using Fin.Domain.Enums;
+using Fin.Domain.Exceptions;
 
 namespace Fin.Application.Services
 {
@@ -24,7 +25,7 @@ namespace Fin.Application.Services
             User user = await unitOfWork.UserRepository.GetByIdAsync(userId);
 
             if (user == null)
-                return null;
+                throw new NotFoundException("User not found.");
 
             Portfolio portfolio = new Portfolio()
             {
@@ -47,7 +48,7 @@ namespace Fin.Application.Services
             Portfolio portfolio = await unitOfWork.PortfolioRepository.GetByIdAsync(portfolioId, u => u.User, t => t.Trades);
 
             if (portfolio == null || portfolio.User == null || portfolio.User.Id != userId || portfolio.Trades == null || portfolio.Trades.Any())
-                return false;
+                throw new NotFoundException("Entity doesn't exist or access is denied.");
 
             unitOfWork.PortfolioRepository.Delete(portfolio);
 
@@ -59,7 +60,7 @@ namespace Fin.Application.Services
             Portfolio portfolio = await unitOfWork.PortfolioRepository.GetByIdAsync(portfolioId, u => u.User);
 
             if (portfolio == null || portfolio.User == null || portfolio.User.Id != userId)
-                return null;
+                throw new NotFoundException("Entity doesn't exist or access is denied.");
 
             return new PortfolioResponse()
             {
@@ -84,7 +85,7 @@ namespace Fin.Application.Services
             Portfolio portfolio = await unitOfWork.PortfolioRepository.GetByIdAsync(portfolioId, u => u.User, u => u.User, t => t.Trades);
 
             if (portfolio == null || portfolio.User == null || portfolio.User.Id != userId)
-                return null;
+                throw new NotFoundException("Entity doesn't exist or access is denied.");
 
             decimal balance = 0;
 

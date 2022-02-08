@@ -5,6 +5,7 @@ using System.Text;
 using Fin.Application.DTOs;
 using Fin.Application.Interfaces;
 using Fin.Application.Helpers;
+using Fin.Domain.Exceptions;
 
 namespace Fin.Application.Services
 {
@@ -43,14 +44,10 @@ namespace Fin.Application.Services
             string refreshTokenToValidateHash = PasswordHelper.HashUsingPbkdf2(user.RefreshToken, Convert.FromBase64String(tokenSecret));
 
             if (user != null && user.RefreshToken != refreshTokenToValidateHash)
-            {
-                return false;
-            }
+                throw new BadRequestException("Invalid refresh token.");
 
             if (user.RefreshTokenExpiration < DateTime.UtcNow)
-            {
-                return false;
-            }
+                throw new BadRequestException("Refresh token expired.");
 
             return true;
         }
