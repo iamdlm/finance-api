@@ -8,6 +8,7 @@ using Xunit;
 
 namespace Fin.Infrastructure.Tests
 {
+    [Collection("InMemoryTest collection")]
     public class UserRepositoryTests : IClassFixture<InMemoryTestFixture>
     {
         public readonly InMemoryTestFixture fixture;
