@@ -11,6 +11,7 @@ using Xunit;
 
 namespace Fin.Application.Tests
 {
+    [Collection("InMemoryTest collection")]
     public class PortfolioServiceTests : IClassFixture<InMemoryTestFixture>
     {
         public readonly InMemoryTestFixture fixture;

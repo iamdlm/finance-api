@@ -8,6 +8,7 @@ using Xunit;
 
 namespace Fin.Api.Tests
 {
+    [Collection("InMemoryTest collection")]
     public class TradeControllerTests : IClassFixture<InMemoryTestFixture>
     {
         public readonly InMemoryTestFixture fixture;
