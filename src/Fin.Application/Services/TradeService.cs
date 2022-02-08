@@ -2,6 +2,7 @@
 using Fin.Application.ViewModels;
 using Fin.Domain.Entities;
 using Fin.Domain.Enums;
+using Fin.Domain.Exceptions;
 using Fin.Domain.Repositories;
 using System;
 using System.Collections.Generic;
@@ -24,15 +25,15 @@ namespace Fin.Application.Services
             User user = await unitOfWork.UserRepository.GetByIdAsync(userId);
 
             if (user == null)
-                return null;
+                throw new NotFoundException("Entity doesn't exist or access is denied.");
 
             Portfolio portfolio = await unitOfWork.PortfolioRepository.GetByIdAsync(portfolioId, u => u.User, t => t.Trades);
 
             if (portfolio == null || portfolio.User == null || portfolio.User.Id != userId)
-                return null;
+                throw new NotFoundException("Entity doesn't exist or access is denied.");
 
-            if (portfolio.Trades.Any(t => t.Currency != tradeRequest.Currency)) 
-                return null;
+            if (portfolio.Trades.Any(t => t.Currency != tradeRequest.Currency))
+                throw new BadRequestException("Invalid currency for the specified portfolio.");
 
             DateTime date;
             TradeAction action;
@@ -42,11 +43,19 @@ namespace Fin.Application.Services
                 date = DateTime.Parse(tradeRequest.Date);
                 bool conversion = Enum.TryParse(tradeRequest.Action, true, out action);
                 if (!conversion)
-                    throw new Exception();
+                    throw new ArgumentException();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return null;
+                string message = ex.Message;
+
+                if (ex is ArgumentNullException || ex is FormatException)
+                    message = "Invalid date.";
+
+                if (ex is ArgumentException)
+                    message = "Invalid action.";
+
+                throw new BadRequestException(message);
             }
 
             Trade trade = new Trade()
@@ -78,7 +87,7 @@ namespace Fin.Application.Services
             Trade trade = await unitOfWork.TradeRepository.GetByIdAsync(tradeId);
 
             if (trade == null || trade.User.Id != userId || trade.Portfolio.Id != portfolioId)
-                return false;
+                throw new NotFoundException("Entity doesn't exist or access is denied.");
 
             unitOfWork.TradeRepository.Delete(trade);
 
@@ -90,7 +99,7 @@ namespace Fin.Application.Services
             Portfolio portfolio = await unitOfWork.PortfolioRepository.GetByIdAsync(portfolioId, u => u.User, t => t.Trades);
 
             if (portfolio == null || portfolio.User.Id != userId)
-                return null;
+                throw new NotFoundException("Entity doesn't exist or access is denied.");
 
             return portfolio.Trades.Select(t => new TradeResponse()
             {
@@ -115,7 +124,7 @@ namespace Fin.Application.Services
             Trade trade = await unitOfWork.TradeRepository.GetByIdAsync(tradeId, u => u.User, p => p.Portfolio);
 
             if (trade == null || trade.User.Id != userId || trade.Portfolio.Id != portfolioId)
-                return null;
+                throw new NotFoundException("Entity doesn't exist or access is denied.");
 
             return new TradeResponse()
             {

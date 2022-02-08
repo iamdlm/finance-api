@@ -11,6 +11,7 @@ using System;
 using System.Text;
 using Fin.Infrastructure;
 using Fin.Api.Helpers;
+using Fin.Api.Middlewares;
 
 namespace Fin.Api
 {
@@ -100,6 +101,9 @@ namespace Fin.Api
             app.UseAuthentication();
 
             app.UseAuthorization();
+
+            // Global exception handler
+            app.UseMiddleware<ExceptionHandlerMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {

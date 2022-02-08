@@ -1,5 +1,6 @@
 using Fin.Application.Services;
 using Fin.Application.ViewModels;
+using Fin.Domain.Exceptions;
 using Fin.Domain.Tests;
 using Fin.Infrastructure.Repositories;
 using Fin.Infrastructure.Tests;
@@ -35,13 +36,10 @@ namespace Fin.Application.Tests
         }
 
         [Fact]
-        public async Task GetByIdAsync_Returns_Null()
+        public async Task GetByIdAsync_Throws_NotFoundException()
         {
-            // Act
-            var portfolio = await portfolioService.GetAsync(MockData.UserB.Id, new Guid());
-
             // Assert
-            Assert.Null(portfolio);
+            await Assert.ThrowsAsync<NotFoundException>(async () => await portfolioService.GetAsync(MockData.UserB.Id, new Guid()));
         }
 
         [Fact]
@@ -100,16 +98,10 @@ namespace Fin.Application.Tests
         }
 
         [Fact]
-        public async Task DeleteAsync_NotDecreases_Count()
+        public async Task DeleteAsync_Throws_NotFoundException()
         {
-            // Act
-            var portfoliosBefore = await portfolioService.GetAllByUserIdAsync(MockData.UserB.Id);
-            var result = await portfolioService.DeleteAsync(MockData.UserB.Id, new Guid());
-            var portfoliosAfter = await portfolioService.GetAllByUserIdAsync(MockData.UserB.Id);
-
             // Assert
-            Assert.False(result);
-            Assert.Equal(portfoliosBefore.ToList().Count, portfoliosAfter.ToList().Count);
+            await Assert.ThrowsAsync<NotFoundException>(() => portfolioService.DeleteAsync(MockData.UserB.Id, new Guid()));
         }
 
         [Fact]

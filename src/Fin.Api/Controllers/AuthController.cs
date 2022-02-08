@@ -44,7 +44,7 @@ namespace Fin.Api.Controllers
             if (signupResult == null)
                 return BadRequest(new
                 {
-                    Message = signupResult.Message
+                    Message = "An error occurred."
                 });
 
             return Ok(signupResult);
