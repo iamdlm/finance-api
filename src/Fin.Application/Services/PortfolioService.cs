@@ -47,8 +47,11 @@ namespace Fin.Application.Services
         {
             Portfolio portfolio = await unitOfWork.PortfolioRepository.GetByIdAsync(portfolioId, u => u.User, t => t.Trades);
 
-            if (portfolio == null || portfolio.User == null || portfolio.User.Id != userId || portfolio.Trades == null || portfolio.Trades.Any())
+            if (portfolio == null || portfolio.User == null || portfolio.User.Id != userId || portfolio.Trades == null)
                 throw new NotFoundException("Entity doesn't exist or access is denied.");
+
+            if (portfolio.Trades.Any())
+                throw new BadRequestException("Cannot delete portfolio because already has trades.");
 
             unitOfWork.PortfolioRepository.Delete(portfolio);
 

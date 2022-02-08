@@ -23,7 +23,7 @@ namespace Fin.Infrastructure.Tests
         private void Init()
         {
             var options = new DbContextOptionsBuilder<FinDbContext>()
-                .UseInMemoryDatabase("FinDbContext")
+                .UseInMemoryDatabase(Guid.NewGuid().ToString())
                 .Options;
 
             DbContext = new FinDbContext(options);
